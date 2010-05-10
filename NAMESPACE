@@ -1,0 +1,8 @@
+export(
+print.sparkTable,
+sparkTable_Config,
+spark,
+spark_init,
+sparkHTML,
+sparkEPS
+)
