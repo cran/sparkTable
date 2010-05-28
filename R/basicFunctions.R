@@ -54,9 +54,13 @@ f.numericCol <- function(dat, type){
     out <- max(dat,na.rm="TRUE")
   }else if (type=="median"){
     out <- median(dat,na.rm="TRUE")
+  }else if (type=="summary") {
+	m1 <- min(dat,na.rm="TRUE")
+	m2 <- mean(dat,na.rm="TRUE")
+	m3 <- max(dat,na.rm="TRUE")
+	out <- c("summary",m1,m2,m3)
   }else{
     eval(parse(text=paste("out <- ",type,"(dat)",sep="")))
   }
-  out
-  
+  out  
 }

@@ -3,7 +3,7 @@
 \title{Create meta objects which are later to be used as input-objects
 for the plot-function.}
 \description{
- Generation of a meta-object which can be used by the \code{\link{sparkTable_Config}}-function, and this
+ Generation of a meta-object which can be used by the \code{\link{print.sparkTable}}-function. Tis
  object also contains the properties of the plots. 
  }
 \usage{
@@ -46,8 +46,8 @@ Returns an object of class \code{meta} including \code{$metaData} and \code{meta
 
 }
 \author{Bernhard Meindl, Alexander Kowarik, Statistics Austria  }
-\seealso{\code{\link{print.sparkTable}}, \code{\link{sparkTable_Config}}, \code{\link{spark}}, 
-		\code{\link{spark_init}}, \code{\link{sparkHTML}}}
+\seealso{\code{\link{print.sparkTable}}, \code{\link{setPara}}, \code{\link{sparkTable_Config}}, \code{\link{spark}}, 
+		\code{\link{spark_init}}, \code{\link{sparkHTML}},, \code{\link{sparkEPS}}}
 \examples{
 
 # This function produces an artificial data set of N time units
@@ -94,4 +94,38 @@ meta <- sparkTable_Config(df, groups=c("AT","UK","IT"),
 
 obj <- print(meta,outdir="examples",outfile="test.html")
 
+### production index
+data(pi)
+pi_jahr <- dat[1:4,]
+pi_monat <- dat[6:nrow(dat),]
+transform_for_meta <- function(x,time="row",vars=NULL){
+  if(time!="row"){
+    x <- t(x)                
+  }
+  if(!is.null(vars)){
+    x <- x[,vars]    
+  }
+  gr <- vector()
+  val <- vector()
+  for(i in 1:ncol(x)){
+    gr <- c(gr,rep(names(x)[i],nrow(x)))
+    val <- c(val,x[,i]) 
+  }
+  data.frame(group=gr,values=val,stringsAsFactors=FALSE)
+}
+pi_j2 <- transform_for_meta(pi_jahr)
+pi_m2 <- transform_for_meta(pi_monat)
+j <- vector()
+for(i in 6:20){
+  j <- c(j,paste(rep(1990+i,12),1:12,sep="-"))
+}
+pi_m2$values2 <- pi_m2$values
+meta <- sparkTable_Config(df=pi_m2,groups=unique(pi_m2[,1]),groupVar=names(pi_m2)[1],
+    vars=names(pi_m2)[2:3], 
+    typeNumeric=list(NA,c("51--62"))
+    , 
+    typePlot=list("line",NA),
+    output="html")
+meta$metaData <- setPara(meta$metaData, "ch", 25,col=1)
+obj <- print(meta,outfile="test.html",outdir="examples")
 }

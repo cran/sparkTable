@@ -14,17 +14,9 @@ spark(filename, para, type, output, outdir)
   \item{output }{the output format, either "eps" or "html}
   \item{outdir }{ optional argument to which output should be saved. If this parameter is NULL, the current work-directory is used. }
 }
-\details{
-}
-\value{
-
-}
-\references{ }
 \author{Bernhard Meindl, Alexander Kowarik, Statistics Austria }
-\note{ 
-}
-\seealso{\code{\link{print.sparkTable}}, \code{\link{sparkTable_Config}}, \code{\link{spark}}, 
-		\code{\link{spark_init}}, \code{\link{sparkHTML}}}
+\seealso{\code{\link{print.sparkTable}}, \code{\link{setPara}}, \code{\link{sparkTable_Config}}, \code{\link{spark}}, 
+		\code{\link{spark_init}}, \code{\link{sparkHTML}}, \code{\link{sparkEPS}}}
 		
 \examples{
 
@@ -42,7 +34,3 @@ para1$barSpacing <- 1
 para1$barWidth <- 3
 spark(fn1, para1, type="bar", output="eps")
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

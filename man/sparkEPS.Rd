@@ -16,8 +16,8 @@ sparkEPS(filename, para, type)
 \author{
 Bernhard Meindl, Alexander Kowarik, Statistics Austria }
 
-\seealso{\code{\link{print.sparkTable}}, \code{\link{sparkTable_Config}}, \code{\link{spark}}, 
-		\code{\link{spark_init}}, \code{\link{sparkHTML}}}
+\seealso{\code{\link{print.sparkTable}}, \code{\link{setPara}}, \code{\link{sparkTable_Config}}, \code{\link{spark}}, 
+		\code{\link{spark_init}}, \code{\link{sparkHTML}},, \code{\link{sparkEPS}}}
 
 \examples{
 

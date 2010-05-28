@@ -113,13 +113,14 @@ sparkEPS <- function(filename, para, type) {
 				cat("there is no variation in the input data, no IQR-box can be shown!\n")
 			else {
 				colBox <- as.vector(f.colors(para$fillColor))	
-				cat(colBox[1], " ",  colBox[2], " ", colBox[3], " setrgbcolor\n", file=zz) 
+				#cat(colBox[1], " ",  colBox[2], " ", colBox[3], " setrgbcolor\n", file=zz) 
 				v <- quantile(y, c(0.25, 0.75), na.rm=TRUE)
 				cat(x[1], " ", v[1], " moveto\n", file=zz)
 				cat(x[length(x)], " ", v[1], " lineto\n", file = zz) 
 				cat(x[length(x)], " ", v[2], " lineto\n", file = zz) 
 				cat(x[1], " ", v[2], " lineto\n", file = zz) 
 				cat(x[1], " ", v[2], " moveto\n", file = zz) 	
+				cat(".8 setgray\n", file = zz) 
 				cat("fill closepath stroke\n", file = zz) 				
 			}			
 		}

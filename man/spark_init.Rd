@@ -52,8 +52,8 @@ spark_init(v, cw=100, ch=50, top_padding=5, bottom_padding=5, left_padding=5,
 \code{spark_init} returns a list containing information and properties depending on the chosen type. 
 }
 \author{Bernhard Meindl, Alexander Kowarik, Statistics Austria }
-\seealso{\code{\link{print.sparkTable}}, \code{\link{sparkTable_Config}}, \code{\link{spark}}, 
-		\code{\link{spark_init}}, \code{\link{sparkHTML}}}
+\seealso{\code{\link{print.sparkTable}}, \code{\link{setPara}}, \code{\link{sparkTable_Config}}, \code{\link{spark}}, 
+		\code{\link{spark_init}}, \code{\link{sparkHTML}},, \code{\link{sparkEPS}}}
 \examples{
 
 #  

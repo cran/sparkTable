@@ -1,4 +1,4 @@
-print.sparkTable <- function(x, outdir=NULL,outfile=NULL,digits=2,...) {
+print.sparkTable <- function(x, outdir=NULL, outfile=NULL, rowVec=NULL, colVec=NULL, digits=2,...) {
   objMeta <- x
 	if( class(objMeta) != "sparkTable" )
 		stop("wrong class!\n")
@@ -23,34 +23,65 @@ print.sparkTable <- function(x, outdir=NULL,outfile=NULL,digits=2,...) {
 	if( metaInfo$output=="html" ) 
 		metaInfo$epsTable <- list()
 
-  metaInfo$html_header <- list()
-  for( i in 1:nRows ) {
+  	metaInfo$html_header <- list()
+  	for( i in 1:nRows ) {
 		metaInfo$filenames[[i]] <- list()
 		for( j in 1:nCols ) {
 			if( metaInfo$output=="eps" ) {
-        metaInfo$filenames[[i]][[j]] <- paste("out",i,j,".eps", sep="")
+        		metaInfo$filenames[[i]][[j]] <- paste("out",i,j,".eps", sep="")
 				if(is.numeric(plotDat[[i]][[j]])&&length(plotDat[[i]][[j]])==1){
-          m[i,j] <- paste("$",round(plotDat[[i]][[j]],digits),"$",sep= "")
-        }else{
-          m[i,j] <- paste("\\includegraphics[height=1em]{", metaInfo$filenames[[i]][[j]], "}",sep="")
-          spark(metaInfo$filenames[[i]][[j]], plotDat[[i]][[j]], type=metaInfo$colsType[j], output=metaInfo$output)
-        }
+          			m[i,j] <- paste("$",round(plotDat[[i]][[j]],digits),"$",sep= "")
+        		}
+				else if(plotDat[[i]][[j]][1]=="summary") {
+					x <- plotDat[[i]][[j]]
+					x <- as.numeric(x[2:length(x)])
+					x <- round(x, digits)
+					m[i,j] <- paste("$",x[1],"|",x[2],"|", x[3],"$", sep="")
+				}
+				else{
+          			m[i,j] <- paste("\\includegraphics[height=1.8em]{", metaInfo$filenames[[i]][[j]], "}",sep="")
+          			spark(metaInfo$filenames[[i]][[j]], plotDat[[i]][[j]], type=metaInfo$colsType[j], output=metaInfo$output)
+        		}
 			}
 			if( metaInfo$output=="html" ) {
-        if(is.numeric(plotDat[[i]][[j]])&&length(plotDat[[i]][[j]])==1){
-          m[i,j] <- round(plotDat[[i]][[j]],digits)
-        }else{
-          out <- sparkHTML("",plotDat[[i]][[j]], type=metaInfo$colsType[j], return=TRUE, fixedIndex=j)
-				  m[i,j] <- out$body
-				  if(i==1)
-            metaInfo$html_header[[length(metaInfo$html_header)+1]] <- out$head
-        }
-			}		####	
+        		if(is.numeric(plotDat[[i]][[j]])&&length(plotDat[[i]][[j]])==1){
+         			m[i,j] <- round(plotDat[[i]][[j]],digits)
+        		}
+				else if(plotDat[[i]][[j]][1]=="summary") {
+					x <- plotDat[[i]][[j]]
+					x <- as.numeric(x[2:length(x)])
+					x <- round(x, digits)
+					m[i,j] <- paste(x[1],"|",x[2],"|", x[3], sep="")
+				}					
+				else{
+          			out <- sparkHTML("",plotDat[[i]][[j]], type=metaInfo$colsType[j], return=TRUE, fixedIndex=j)
+				  	m[i,j] <- out$body
+				  	if(i==1)
+            			metaInfo$html_header[[length(metaInfo$html_header)+1]] <- out$head
+        		}
+			}			
 		}
 	}		
+	
 	#setwd(savedir)
-	rownames(m) <- replaceStr(metaInfo$groups,"underline")
-	colnames(m) <- paste(metaInfo$colsVar,metaInfo$colsType,sep=" - ")	
+	if (!is.null(rowVec) & length(rowVec) == nrow(m))
+		rownames(m) <- rowVec
+	else
+		rownames(m) <- replaceStr(metaInfo$groups,"underline")
+	
+	if (!is.null(colVec) & length(colVec) == ncol(m))
+		colnames(m) <- colVec
+	else
+		colnames(m) <- paste(metaInfo$colsVar,metaInfo$colsType,sep=" - ")	
+
+	# quick and dirty
+	if ( metaInfo$output == "eps" ) {
+		indexValues <- which(as.character(sapply(m[1,], substr, 1, 1))=="$")
+		indexGraphs <- setdiff(1:ncol(m), indexValues)
+		m <- m[,c(indexGraphs,indexValues)]
+		#colnames(m) <- colnames(m)[c(indexGraphs,indexValues)]
+	}	
+	
 	m <- xtable(m)
 	
 	if( metaInfo$output=="eps" )
@@ -104,7 +135,5 @@ print.sparkTable <- function(x, outdir=NULL,outfile=NULL,digits=2,...) {
     }
   }
   setwd(savedir)
-  out 
-   
-  
+  out   
 }
