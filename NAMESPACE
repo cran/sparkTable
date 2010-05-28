@@ -4,5 +4,6 @@ sparkTable_Config,
 spark,
 spark_init,
 sparkHTML,
-sparkEPS
+sparkEPS,
+setPara
 )

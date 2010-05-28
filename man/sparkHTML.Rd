@@ -24,8 +24,8 @@ If return=TRUE a list containing two components is returned.
 Bernhard Meindl, Alexander Kowarik, Statistics Austria }
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{\code{\link{print.sparkTable}}, \code{\link{sparkTable_Config}}, \code{\link{spark}}, 
-		\code{\link{spark_init}}, \code{\link{sparkHTML}}}
+\seealso{\code{\link{print.sparkTable}}, \code{\link{setPara}}, \code{\link{sparkTable_Config}}, \code{\link{spark}}, 
+		\code{\link{spark_init}}, \code{\link{sparkHTML}},, \code{\link{sparkEPS}}}
 \examples{
 
 # BRP data
