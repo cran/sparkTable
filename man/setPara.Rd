@@ -19,7 +19,7 @@ setPara(metaObj, para, val, col=NULL)
 		\code{\link{spark_init}}, \code{\link{sparkHTML}},, \code{\link{sparkEPS}}}
 				
 \examples{
-data(population)
+data(pop)
 metaObj <- sparkTable_Config(
 		df=pop, 
 		groups=as.character(unique(pop[,2])), 

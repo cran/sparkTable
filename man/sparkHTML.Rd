@@ -46,7 +46,7 @@ obj <- print(meta,outfile="examples/test.html")
 
 
 # production index 
-data(pi)
+data(dat)
 
 pi_konsum <- dat$Energie[6:67]
 

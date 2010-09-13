@@ -95,7 +95,7 @@ meta <- sparkTable_Config(df, groups=c("AT","UK","IT"),
 obj <- print(meta,outdir="examples",outfile="test.html")
 
 ### production index
-data(pi)
+data(dat)
 pi_jahr <- dat[1:4,]
 pi_monat <- dat[6:nrow(dat),]
 transform_for_meta <- function(x,time="row",vars=NULL){
