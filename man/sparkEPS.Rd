@@ -39,7 +39,7 @@ obj <- print(meta,outdir="examples",outfile="gdp.tex")
 # --------------------------------
 
 # production index 
-data(pi)
+data(dat)
 
 pi_konsum <- dat$Konsumgueter[6:67]
 

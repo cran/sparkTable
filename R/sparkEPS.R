@@ -120,7 +120,8 @@ sparkEPS <- function(filename, para, type) {
 				cat(x[length(x)], " ", v[2], " lineto\n", file = zz) 
 				cat(x[1], " ", v[2], " lineto\n", file = zz) 
 				cat(x[1], " ", v[2], " moveto\n", file = zz) 	
-				cat(".8 setgray\n", file = zz) 
+				
+        cat(paste(f.colors(para$shadowCol),collapse=" ")," setrgbcolor\n", file = zz) 
 				cat("fill closepath stroke\n", file = zz) 				
 			}			
 		}

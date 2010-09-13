@@ -18,7 +18,7 @@ f.colors <- function(ina) {
   a <- c(as.character(0:9), letters[1:6])
   ss <- unlist(strsplit(ina,""))[2:4] 
   out <- (17*as.numeric(unlist(sapply(ss, function(x) { which(x==a) } ))-1))
-  out
+  round(out/255,2)
 }
 
 f.checkColors <- function(col) {
