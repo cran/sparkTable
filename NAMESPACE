@@ -1,9 +1,7 @@
 export(
-print.sparkTable,
-sparkTable_Config,
-spark,
-spark_init,
-sparkHTML,
-sparkEPS,
-setPara
+	newSparkLine,newSparkBar,newSparkBox,newSparkTable,reshapeExt,newGeoTable,
+	setParameter,getParameter,plotSparks,plotSparkTable,plotGeoTable
 )
+exportClasses(sparkline,sparkbox,sparkbar,sparkTable,geoTable)
+
+importFrom(graphics, plot)
