@@ -4,6 +4,9 @@
 \alias{gini}
 \alias{dat}
 \alias{pop}
+\alias{popEU}
+\alias{debtEU}
+\alias{coordsEU}
 \title{data sets for testing the sparkTable package}
 \usage{
 data(brp)
@@ -11,6 +14,9 @@ data(gdp)
 data(gini)
 data(dat)
 data(pop)
+data(popEU)
+data(debtEU)
+data(coordsEU)
 }
 \description{
   brp...Gross Regional Product Austria
@@ -18,6 +24,10 @@ data(pop)
   gini...gini Index for different european countries from 2004 to 2007 
   dat...Production Index in Austria 
   pop...the number of people living in Austria in different subgroups and years
+  popEU ...
+  debtEU ... 
+  coordsEU ...
+  
 }
 \examples{
 data(brp)
