@@ -673,11 +673,12 @@ setMethod(
 #####################
 ### Plot methods ####
 #####################
+setGeneric("plotSparks", function(object, outputType="pdf", filename="testSpark", ...) { standardGeneric("plotSparks")} )
 setMethod(
-	f='plot',
+	f='plotSparks',
 	signature='sparkline',
-	definition=function(x, outputType, filename="testLine", ...) {
-		.Object <- x
+	definition=function(object, outputType="pdf", filename="testSpark", ...) {
+		.Object <- object
 		if ( !outputType %in% c("pdf","eps","png") )
 			stop("please provide a valid output type!\n")
 		filename <- paste(filename, ".", outputType, sep="")
@@ -708,13 +709,13 @@ setMethod(
 		
 		# minimum
 		if ( !is.na(.Object@allColors[1]) ) {
-			minIndex <- max(which(.Object@coordsY==min(.Object@coordsY)))
+			minIndex <- max(which(.Object@coordsY==min(na.omit(.Object@coordsY))))
 			grid.points(unit(.Object@coordsX[minIndex],"inches"), unit(.Object@coordsY[minIndex],"inches"), size=unit((.Object@pointWidth/100)*.Object@availableWidth, "inches"), gp=gpar(col=.Object@allColors[1], fill=.Object@allColors[1]), pch=19)
 		}
 		
 		# maximum
 		if ( !is.na(.Object@allColors[2]) ) {
-			maxIndex <- max(which(.Object@coordsY==max(.Object@coordsY)))
+			maxIndex <- max(which(.Object@coordsY==max(na.omit(.Object@coordsY))))
 			grid.points(unit(.Object@coordsX[maxIndex],"inches"), unit(.Object@coordsY[maxIndex],"inches"), size=unit((.Object@pointWidth/100)*.Object@availableWidth, "inches"), gp=gpar(col=.Object@allColors[2]), pch=19)
 		}
 		
@@ -728,10 +729,10 @@ setMethod(
 )
 
 setMethod(
-	f='plot',
+	f='plotSparks',
 	signature='sparkbar',
-	definition=function(x, outputType, filename="testBar", ...) {
-		.Object <- x
+	definition=function(object, outputType="pdf", filename="testSpark", ...) {
+		.Object <- object
 		if ( !outputType %in% c("pdf","eps","png") )
 			stop("please provide a valid output type!\n")
 		filename <- paste(filename, ".", outputType, sep="")
@@ -752,14 +753,16 @@ setMethod(
 		# default: positive and negative values
 		yStart <- .Object@height/2	
 		# case 1: all values >= 0
-		if ( all(.Object@values <= 0) )
+		if ( all(.Object@values <= 0,na.rm=TRUE) )
 			yStart <- .Object@height - ((.Object@height - .Object@availableHeight) / 2)
 		# case 2: all values <= 0
-		if ( all(.Object@values >= 0) )
+		if ( all(.Object@values >= 0,na.rm=TRUE) )
 			yStart <- ((.Object@height - .Object@availableHeight) / 2)
 		
 		for ( i in 1:length(.Object@coordsX)) {
-			if ( .Object@coordsY[i] < 0 ) {
+      if(is.na(.Object@coordsY[i]))
+        .Object@coordsY[i] <- 0
+      if ( .Object@coordsY[i] < 0 ) {
 				grid.rect(
 						x=unit(.Object@coordsX[i], "inches"), 
 						y=unit(yStart, "inches"), 
@@ -785,10 +788,10 @@ setMethod(
 )
 
 setMethod(
-	f='plot',
+	f='plotSparks',
 	signature='sparkbox',
-	definition=function(x, outputType, filename="testBox", ...) {
-		.Object <- x
+	definition=function(object, outputType="pdf", filename="testSpark", ...) {
+		.Object <- object
 		if ( !outputType %in% c("pdf","eps","png") )
 			stop("please provide a valid output type!\n")
 		filename <- paste(filename, ".", outputType, sep="")
@@ -884,12 +887,12 @@ setMethod(
 		dev.off()
 	}	
 )
-
+setGeneric("plotSparkTable", function(object, outputType="html", filename=NULL, graphNames="out", ...) { standardGeneric("plotSparkTable")} )
 setMethod(
-	f='plot',
+	f='plotSparkTable',
 	signature='sparkTable',
-	definition=function(x, outputType="html", filename=NULL, graphNames="out", ...) {
-		.Object <- x
+	definition=function(object, outputType="html", filename=NULL, graphNames="out", ...) {
+		.Object <- object
 		if ( !outputType %in% c("tex", "html") )
 			stop("please provide a valid output type!\n")
 		filename <- paste(filename, ".", outputType, sep="")
@@ -930,10 +933,10 @@ setMethod(
 					padding(tmpObj) <- padding(.Object@tableContent[[i]])
 					plotObj[[i]][[j]] <- tmpObj
 					if(outputType=="tex"){
-						plot(plotObj[[i]][[j]], outputType='pdf', filename=fn)
+						plotSparks(plotObj[[i]][[j]], outputType='pdf', filename=fn)
 						m[j,i] <- paste("\\graph{1}{1}{", fn, "}",sep="")
 					}else  if(outputType=="html"){
-						plot(plotObj[[i]][[j]], outputType='png', filename=fn)
+            plotSparks(plotObj[[i]][[j]], outputType='png', filename=fn)
 						m[j,i] <- paste('<img src="', fn, '.png">',sep="")  
 					}else stop("WTF happened now?")
 				}else if ( class(.Object@tableContent[[i]]) == "sparkbar" )  {
@@ -945,10 +948,10 @@ setMethod(
 					padding(tmpObj) <- padding(.Object@tableContent[[i]])
 					plotObj[[i]][[j]] <- tmpObj					
 					if(outputType=="tex"){
-						plot(plotObj[[i]][[j]], outputType='pdf', filename=fn)
+            plotSparks(plotObj[[i]][[j]], outputType='pdf', filename=fn)
 						m[j,i] <- paste("\\graph{1}{1}{", fn, "}",sep="")
 					}else if(outputType=="html"){
-						plot(plotObj[[i]][[j]], outputType='png', filename=fn)
+            plotSparks(plotObj[[i]][[j]], outputType='png', filename=fn)
 						m[j,i] <- paste('<img src="', fn, '.png">',sep="")
 					}else stop("WTF happened now?")
 				}else if ( class(.Object@tableContent[[i]]) == "sparkbox" )  {
@@ -961,11 +964,11 @@ setMethod(
 					padding(tmpObj) <- padding(.Object@tableContent[[i]])
 					plotObj[[i]][[j]] <- tmpObj
 					if(outputType=="tex"){
-						plot(plotObj[[i]][[j]], outputType='pdf', filename=fn)
+            plotSparks(plotObj[[i]][[j]], outputType='pdf', filename=fn)
 						m[j,i] <- paste("\\graph{1}{1}{", fn, "}",sep="")
 #              m[j,i] <- paste("\\includegraphics[height=1.4em]{", fn, "}",sep="")
 					}else if(outputType=="html"){
-						plot(plotObj[[i]][[j]], outputType='png', filename=fn)
+            plotSparks(plotObj[[i]][[j]], outputType='png', filename=fn)
 						m[j,i] <- paste('<img src="', fn, '.png">',sep="")
 					}else stop("WTF happened now?")
 				}else  if ( class(.Object@tableContent[[i]]) == "function" )  {# user-defined function
@@ -1010,12 +1013,13 @@ setMethod(
 	}	
 )
 
+setGeneric("plotGeoTable", function(object, outputType="html", filename=NULL, graphNames="out", transpose=FALSE, include.rownames=FALSE,include.colnames=FALSE,rownames=NULL,colnames=NULL,...) { standardGeneric("plotGeoTable")} )
 setMethod(
-	f='plot',
+	f='plotGeoTable',
 	signature='geoTable',
-	definition=function(x, outputType="html", filename=NULL, graphNames="out", transpose=FALSE, include.rownames=FALSE,include.colnames=FALSE,rownames=NULL,colnames=NULL,...) {
+	definition=function(object, outputType="html", filename=NULL, graphNames="out", transpose=FALSE, include.rownames=FALSE,include.colnames=FALSE,rownames=NULL,colnames=NULL,...) {
 		print.names <- FALSE
-		.Object <- x
+		.Object <- object
 		if ( !outputType %in% c("tex", "html") )
 			stop("please provide a valid output type!\n")
 		if(!is.null(filename))
@@ -1067,10 +1071,10 @@ setMethod(
 						padding(tmpObj) <- padding(.Object@tableContent[[i]])
 						plotObj[[i]][[j]] <- tmpObj
 						if(outputType=="tex"){
-							plot(plotObj[[i]][[j]], outputType='pdf', filename=fn)
+              plotSparks(plotObj[[i]][[j]], outputType='pdf', filename=fn)
 							m[j,i] <- paste("\\graph{1}{1}{", fn, "}",sep="")
 						}else  if(outputType=="html"){
-							plot(plotObj[[i]][[j]], outputType='png', filename=fn)
+              plotSparks(plotObj[[i]][[j]], outputType='png', filename=fn)
 							m[j,i] <- paste('<img src="', fn, '.png">',sep="") 
 						}else stop("WTF happened now?")
 					}else if ( class(.Object@tableContent[[i]]) == "sparkbar" )  {
@@ -1082,10 +1086,10 @@ setMethod(
 						padding(tmpObj) <- padding(.Object@tableContent[[i]])
 						plotObj[[i]][[j]] <- tmpObj					
 						if(outputType=="tex"){
-							plot(plotObj[[i]][[j]], outputType='pdf', filename=fn)
+              plotSparks(plotObj[[i]][[j]], outputType='pdf', filename=fn)
 							m[j,i] <- paste("\\graph{1}{1}{", fn, "}",sep="")
 						}else if(outputType=="html"){
-							plot(plotObj[[i]][[j]], outputType='png', filename=fn)
+              plotSparks(plotObj[[i]][[j]], outputType='png', filename=fn)
 							m[j,i] <- paste('<img src="', fn, '.png">',sep="")
 						}else stop("WTF happened now?")
 					}else if ( class(.Object@tableContent[[i]]) == "sparkbox" )  {
@@ -1098,10 +1102,10 @@ setMethod(
 						padding(tmpObj) <- padding(.Object@tableContent[[i]])
 						plotObj[[i]][[j]] <- tmpObj
 						if(outputType=="tex"){
-							plot(plotObj[[i]][[j]], outputType='pdf', filename=fn)
+              plotSparks(plotObj[[i]][[j]], outputType='pdf', filename=fn)
 							m[j,i] <- paste("\\graph{1}{1}{", fn, "}",sep="")
 						}else if(outputType=="html"){
-							plot(plotObj[[i]][[j]], outputType='png', filename=fn)
+              plotSparks(plotObj[[i]][[j]], outputType='png', filename=fn)
 							m[j,i] <- paste('<img src="', fn, '.png">',sep="")
 						}else stop("WTF happened now?")
 					}else  if ( class(.Object@tableContent[[i]]) == "function" )  {# user-defined function

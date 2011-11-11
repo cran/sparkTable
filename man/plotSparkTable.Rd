@@ -1,4 +1,7 @@
-\name{plotSparkTable}
+\name{plotSparkTable-methods}
+\docType{methods}
+\alias{plotSparkTable-methods}
+\alias{plotSparkTable,sparkTable-method}
 \alias{plotSparkTable}
 \title{Plot objects of class 'sparkTable'}
 \description{

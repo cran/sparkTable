@@ -16,7 +16,7 @@
 }
 \author{Bernhard Meindl, Alexander Kowarik, Statistics Austria }
 		
-\seealso{\code{\link{setParameter}}, \code{\link{getParameter}}}
+\seealso{\code{\link{setParameter}}, \code{\link{getParameter}},\code{\link{reshape}}}
 				
 \examples{
 	data(pop,package='sparkTable')

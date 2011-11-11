@@ -1,5 +1,10 @@
-\name{plotSparks}
+\name{plotSparks-methods}
+\docType{methods}
 \alias{plotSparks}
+\alias{plotSparks-methods}
+\alias{plotSparks,sparkbar-method}
+\alias{plotSparks,sparkbox-method}
+\alias{plotSparks,sparkline-method}
 \title{Plot objects of class 'sparkline', 'sparkbar' or 'sparkbox'}
 \description{
   Function that calls plot-methods for objects of class 'sparkline', 'sparkbar' or 'sparkbox'.
