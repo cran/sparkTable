@@ -203,19 +203,19 @@ newGeoTable <- function(dataObj, tableContent, varType,geographicVar,geographicI
 
 ### we don't need to export (and document plot.xy) 
 # user function to plot objects of class 'sparkline', 'sparkbox' and 'sparkbar'
-plotSparks <- function(object, outputType='pdf', filename='testSpark', ...) {
-	plot(x=object, outputType=outputType, filename=filename, ...)
-}
+#plotSparks <- function(object, outputType='pdf', filename='testSpark', ...) {
+#	plot(x=object, outputType=outputType, filename=filename, ...)
+#}
 
 # user function to plot objects of class 'sparkTable'
-plotSparkTable <- function(object, outputType='html', filename=NULL, graphNames='out', ...) {
-	plot(x=object, outputType=outputType, filename=filename, graphNames=graphNames, ...) 
-}
+#plotSparkTable <- function(object, outputType='html', filename=NULL, graphNames='out', ...) {
+#	plot(x=object, outputType=outputType, filename=filename, graphNames=graphNames, ...) 
+#}
 
 # user function to plot objects of class 'geoTable'
-plotGeoTable <- function(object, outputType='html', filename=NULL, graphNames='out', transpose=FALSE, include.rownames=FALSE, include.colnames=FALSE, rownames=NULL, colnames=NULL,...) {
-	plot(x=object, outputType=outputType, filename=filename, graphNames=graphNames, transpose=transpose, include.rownames=include.rownames, include.colnames=include.colnames, rownames=rownames, colnames=colnames,...) 
-}
+#plotGeoTable <- function(object, outputType='html', filename=NULL, graphNames='out', transpose=FALSE, include.rownames=FALSE, include.colnames=FALSE, rownames=NULL, colnames=NULL,...) {
+#	plot(x=object, outputType=outputType, filename=filename, graphNames=graphNames, transpose=transpose, include.rownames=include.rownames, include.colnames=include.colnames, rownames=rownames, colnames=colnames,...) 
+#}
 
 setParameter <- function(object, value, type) {
 	if ( type == 'width' ) {

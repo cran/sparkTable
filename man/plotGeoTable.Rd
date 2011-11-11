@@ -1,4 +1,7 @@
-\name{plotGeoTable}
+\name{plotGeoTable-methods}
+\docType{methods}
+\alias{plotGeoTable-methods}
+\alias{plotGeoTable,geoTable-method}
 \alias{plotGeoTable}
 \title{Plot objects of class 'geoTable'}
 \description{
