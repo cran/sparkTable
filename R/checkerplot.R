@@ -20,7 +20,7 @@
 checkerplot <- function(data, cols=5, rows=5, geom="line", errorbar=FALSE, title=NULL, title.size=20, label.size=11, 
 		                xbreaks=NULL, xlabels=NULL, ybreaks=NULL, ylabels=NULL,
 		                ymin=NULL, ymax=NULL, img=NULL, aes_geom=NULL, formatter=NULL, 
-						margin_yaxis=0, opts=NULL, ...){
+						margin_yaxis=0,margin_yaxis2=0,margin_xaxis=0,margin_xaxis2=0, opts=NULL, ...){
   
   grid.newpage() 
   if(geom=="line" && errorbar) stop("errorbars are not supported with geom line")
@@ -199,20 +199,21 @@ checkerplot <- function(data, cols=5, rows=5, geom="line", errorbar=FALSE, title
 	  }
         
           if(n_xbreaks > 4 && cols<4){ #just display every third value of x-axis
-            p = p + scale_x_continuous(breaks=xbreaks_cut, labels=xlabels)
+            p = p + scale_x_continuous(breaks=xbreaks_cut, labels=xlabels,minor_breaks=c(),limits=c(min(data$x,na.rm=TRUE),max(data$x,na.rm=TRUE)))
           }else if(n_xbreaks > 4 && cols>=4){ #just display every fifth value of x-axis
-            p = p + scale_x_continuous(breaks=xbreaks_cut, labels=xlabels)   
+            p = p + scale_x_continuous(breaks=xbreaks_cut, labels=xlabels,limits=c(min(data$x,na.rm=TRUE),max(data$x,na.rm=TRUE)))   
 #			p = p + scale_x_continuous(breaks=c(1996,2002,2008), labels=c("96","02","08"))   
           }else{
 			  if(length(data[data$order==ind,]$y) > 1){
-			  	p = p + scale_x_continuous(breaks=xbreaks_cut, labels=xlabels) 
+			  	p = p + scale_x_continuous(breaks=xbreaks_cut, labels=xlabels,limits=c(min(data$x,na.rm=TRUE),max(data$x,na.rm=TRUE))) 
 		  	  } else{
 				  u <- unique(sort(data[,1]))
 				  w <- (u %in% xbreaks_cut )
 				  u2 <- as.character(u)
 				  u2[!w] <- ""
                   u2[w] <- xlabels
-				  p = p + scale_x_continuous(breaks=u, labels=u2, formatter=formatter)  
+          p = p + scale_x_continuous(breaks=xbreaks_cut, labels=xlabels,limits=c(min(data$x,na.rm=TRUE),max(data$x,na.rm=TRUE)))
+				  #p = p + scale_x_continuous(breaks=u, labels=u2, formatter=formatter,limits=c(min(data$x,na.rm=TRUE),max(data$x,na.rm=TRUE)))  
 			  }
 #			  p = p + scale_x_continuous("")
   
@@ -220,9 +221,9 @@ checkerplot <- function(data, cols=5, rows=5, geom="line", errorbar=FALSE, title
 
           # make sure, that all y-axis are equally scaled 
           if(!is.null(formatter)){
-            p = p + scale_y_continuous(limits=c(yLim_min,yLim_max), breaks=ylabels, formatter=formatter)
+            p = p + scale_y_continuous(limits=c(yLim_min,yLim_max), breaks=ybreaks,labels=ylabels, formatter=formatter)
           }else{
-            p = p + scale_y_continuous(limits=c(yLim_min,yLim_max), breaks=ylabels)
+            p = p + scale_y_continuous(limits=c(yLim_min,yLim_max),breaks=ybreaks,labels=ylabels)
           }
         }
         #----------------------------------------------------------------------------------
@@ -300,9 +301,9 @@ checkerplot <- function(data, cols=5, rows=5, geom="line", errorbar=FALSE, title
         
         # make sure, that all y-axis are equally scaled 
         if(!is.null(formatter)){
-            p = p + scale_y_continuous(limits=c(yLim_min,yLim_max), breaks=ylabels, formatter=formatter)
+            p = p + scale_y_continuous(limits=c(yLim_min,yLim_max), breaks=ybreaks,labels=ylabels, formatter=formatter)
           }else{
-            p = p + scale_y_continuous(limits=c(yLim_min,yLim_max), breaks=ylabels)
+            p = p + scale_y_continuous(limits=c(yLim_min,yLim_max), breaks=ybreaks,labels=ylabels)
         }
         
         #------------------------------------------------------------------------------
@@ -317,16 +318,16 @@ checkerplot <- function(data, cols=5, rows=5, geom="line", errorbar=FALSE, title
         #plot.margin property of the opts-function for the ggplot2 object is used 
         #------------------------------------------------------------------------------
         if(i==2 && j==(nrows-2)){ #plot y-axis labels and x-axis 
-          p = p + opts(plot.margin = unit(c(0, 0, -1.8, (-2.2+margin_yaxis)), "lines"))
+          p = p + opts(plot.margin = unit(c(0, 0, -1.8+margin_xaxis, (-2.2+margin_yaxis)), "lines"))
         }else if(i==2){ #plot y-axis
           p = p + opts(axis.text.x = theme_blank())
-          p = p + opts(plot.margin = unit(c(0, 0, -1.5, (-2.2+margin_yaxis)), "lines")) 
+          p = p + opts(plot.margin = unit(c(0, 0, -1.5+margin_xaxis2, (-2.2+margin_yaxis)), "lines")) 
         }else if(j==(nrows-2)){ #plot x-axis
           p = p + opts(axis.text.y = theme_blank())
-          p = p + opts(plot.margin = unit(c(0, 0, -1.8, -1.3), "lines"))             
+          p = p + opts(plot.margin = unit(c(0, 0, -1.8+margin_xaxis, -1.3+margin_yaxis2), "lines"))             
         }else { # plot no axis
           p = p + opts(axis.text.x = theme_blank(), axis.text.y = theme_blank())
-          p = p + opts(plot.margin = unit(c(0, 0, -1.5, -1.3), "lines"))
+          p = p + opts(plot.margin = unit(c(0, 0, -1.5+margin_xaxis2, -1.3+margin_yaxis2), "lines"))
         }
               
         # no x/y-axis labels 
