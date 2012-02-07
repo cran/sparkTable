@@ -5,7 +5,10 @@
    checkerplot
 }
 \usage{
-  checkerplot(data, cols=5, rows=5, geom="line", errorbar=FALSE, title=NULL, title.size=20, label.size=11, xbreaks=NULL, xlabels=NULL, ybreaks=NULL, ylabels=NULL, ymin=NULL, ymax=NULL, img=NULL, aes_geom=NULL, formatter=NULL, margin_yaxis=0, opts=NULL, ...) 
+  checkerplot(data, cols=5, rows=5, geom="line", errorbar=FALSE, title=NULL, title.size=20,
+    label.size=11, xbreaks=NULL, xlabels=NULL, ybreaks=NULL, ylabels=NULL, ymin=NULL,
+    ymax=NULL, img=NULL, aes_geom=NULL, formatter=NULL, margin_yaxis=0, margin_yaxis2=0,
+    margin_xaxis=0, margin_xaxis2=0, opts=NULL, ...) 
 }
 \arguments{
   \item{data}{data frame}
@@ -26,9 +29,17 @@
   pictures (pnm files) displayed beside the label}
   \item{aes_geom}{ggplot2 object to define the aesthetics of the geom}
   \item{formatter}{allows to format the y-axis (scale_x_continuous(formatter = formatter))}
-  \item{margin_yaxis}{allows to adjust the distance from the plot to the left border of the grid for all elements 
-  with an y-axis, because the difference number formats on the y-axis might 
+  \item{margin_yaxis}{allows to adjust the distance from the plot to the left border of the grid for all elements
+    with an y-axis and its annotation, because the difference number formats on the y-axis might 
+  lead to a little displaced plot area} 
+  \item{margin_yaxis2}{allows to adjust the distance from the plot to the left border of the grid for all elements
+    with an y-axis but without annotation}
+  \item{margin_xaxis}{allows to adjust the distance from the plot to the left border of the grid for all elements
+    with an x-axis and annotation, because the difference number formats on the y-axis might 
   lead to a little displaced plot area}
+  \item{margin_xaxis2}{allows to adjust the distance from the plot to the left border of the grid for all elements
+    with an x-axis but without annotation}
+
   \item{opts}{ggplot2 object to change settings in the ggplot2 plots}
   \item{...}{further arguments passed through}
 }
@@ -54,12 +65,14 @@ dirflags = paste(searchpaths()[grep("sparkTable", searchpaths())], "/etc/Flaggen
     data_eu = rbind(data_eu,XX)
   }
 dirflags_eu=paste(dirflags,"EU/",sep="")
-## Not run:
 \dontrun{
-checkerplot(data_eu, cols=8, rows=7, geom="line", img=dirflags_eu,margin_yaxis=0.1, 
-            title = "Unemployment rate in Europe 1997 to 2008 (in \%)", title.size=18)
+checkerplot(data_eu, cols=8, rows=7, geom="line", img=dirflags_eu,
+            title = "Unemployment rate in Europe 1997 to 2008 (in \%)", title.size=18,
+            ylabels=c(5,10,15,20),
+			ybreaks=c(5,10,15,20), xbreaks=c(1998,2001,2004,2007), xlabels=c("98","01","04","07"),
+    		margin_yaxis=-0.05, margin_yaxis2=-0.2,
+    		margin_xaxis=-0.4, margin_xaxis2=0 )
 }
-## End(Not run)
 
 ### EXAMPLE for US data
   data(coordUS)
@@ -81,24 +94,13 @@ checkerplot(data_eu, cols=8, rows=7, geom="line", img=dirflags_eu,margin_yaxis=0
   USdata1 <- USdata1[,nam] 
   ## define directory with flags (pnm's):
   dirflags_us=paste(dirflags,"USStates/",sep="")
-## Not run: 
+  USdata2[,3] <- USdata2[,3]*100
   \dontrun{
-  checkerplot(USdata1[,-3], cols=13, rows=6, geom="line", 
-            title="Health insurance coverage USA - 1999 to 2009", title.size=18, 
-            img=dirflags_us, margin_yaxis=0, ymin=0.7, ymax=1,formatter=function(x,...)
-             {sprintf("\%.1f", x)})
-              
-  checkerplot(USdata1[,-2], cols=13, rows=6, geom="bar", 
-            title="Health insurance - not covered - USA - 1999 to 2009", title.size=18, 
-            img=dirflags_us, margin_yaxis=0, ymin=0.0, ymax=0.3)
-
-  checkerplot(USdata2[,-3], cols=13, rows=6, geom="bar", 
-            title="US government provided health insurance 1999 and 2009 (in \% of the population)", 
-            title.size=18, img=dirflags_us, margin_yaxis=0, formatter=function(x,...) {sprintf("\%.1f", x)})
-            
   checkerplot(USdata2[,-2], cols=13, rows=6, geom="bar", 
-            title="US private health insurance 1999 and 2009 (in \% of the population)",
-            title.size=18, img=dirflags_us, margin_yaxis=0, formatter=function(x,...) {sprintf("\%.1f", x)})
+            title="US private health insurance (in \% of the population)",
+            title.size=18, ylabels=c(30,60,90), ybreaks=c(30,60,90), 
+            img=dirflags_us, margin_yaxis=-0.05, margin_yaxis2=-0.2,
+    		margin_xaxis=-0.4, margin_xaxis2=0,  
+    		formatter=function(x,...) {sprintf("\%.1f", x)})
 }
-## End(Not run)
 }
