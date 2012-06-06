@@ -18,6 +18,7 @@
 }
 				
 \examples{
+	#Population
 	data(pop)
 	b <- newSparkBox()
 	l <- newSparkLine()

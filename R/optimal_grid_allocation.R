@@ -38,6 +38,7 @@ optimal_grid_allocation <- function(data, grid.cols=NULL, grid.rows=NULL, addGri
   f.rhs <- c(rep(1, n1+n2))
   rglpk <- Rglpk_solve_LP(f.obj, f.con, f.dir, f.rhs, types=rep("B", n1*n2), max=FALSE, 
                           bounds=NULL, verbose=FALSE)
+  cat("Minimal sum of squared distances:\n",round(rglpk$optimum,3),"\n")
   sol <- matrix(rglpk$solution, byrow=TRUE, ncol=n1)
   sol1 <- sol 
   ind <- apply(sol, 1, which.max)
