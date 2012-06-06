@@ -2,6 +2,7 @@
 \alias{newSparkBar}
 \alias{newSparkLine}
 \alias{newSparkBox}
+\alias{newSparkHist}
 \title{Functions to create new Spark object}
 \description{
   Basic functions to create objects of the class 'spark'. The functions are the base for creating a graphical table.
@@ -14,6 +15,8 @@ newSparkBar(width=NULL, height=NULL, values=NULL, padding=NULL, barCol=NULL,
 newSparkBox(width=NULL, height=NULL, values=NULL, padding=NULL, boxOutCol=NULL,
     boxMedCol=NULL, boxShowOut=NULL, boxCol=NULL, boxLineWidth=NULL,
     vMin=NULL, vMax=NULL,outputType="html")
+newSparkHist(width=NULL, height=NULL, values=NULL, padding=NULL, barCol=NULL,
+  barWidth=NULL, barSpacingPerc=NULL, vMin=NULL, vMax=NULL,outputType="html")
 }
 \arguments{
   \item{width}{described in \code{\link{setParameter}}}
@@ -88,4 +91,8 @@ newSparkBox(width=NULL, height=NULL, values=NULL, padding=NULL, boxOutCol=NULL,
   cc <- setParameter(cc, c("black","darkgreen"), type='boxCol')
   cc <- setParameter(cc, "darkred", type='outCol')
   plotSparks(cc, outputType='pdf', filename='testBox2')
-}
+  
+  ###SparkHist
+  hh <- newSparkHist(values=rnorm(100))
+  plotSparks(hh, outputType='pdf', filename='testHist1')
+} 

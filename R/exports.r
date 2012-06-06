@@ -73,6 +73,40 @@ newSparkBar <- function(width=NULL, height=NULL, values=NULL, padding=NULL, barC
   x
 }
 
+newSparkHist <- function(width=NULL, height=NULL, values=NULL, padding=NULL, barCol=NULL, barWidth=NULL, barSpacingPerc=NULL, vMin=NULL, vMax=NULL,outputType="html") {
+  x <- new('sparkhist')
+  if ( !is.null(width) ){
+    width(x) <- width
+  }else if(outputType=="tex"){
+    width(x) <- 6
+  }
+  if ( !is.null(height) ){
+    height(x) <- height
+  }else if(outputType=="tex"){
+    height(x) <- 2
+  }
+  if ( !is.null(values) )
+    values(x) <- values
+  if ( !is.null(padding) ){
+    padding(x) <- padding
+  }else if(outputType=="tex"){
+    padding(x) <- c(2,2,2,2)   
+  }
+  if ( !is.null(barCol) )
+    barCol(x) <- barCol
+  if ( !is.null(barWidth) ){
+    barWidth(x) <- barWidth
+  }else if(outputType=="tex"){
+    barWidth(x) <- NULL
+  }
+  if ( !is.null(barSpacingPerc) ){
+    barSpacingPerc(x) <- barSpacingPerc
+  }else if(outputType=="tex"){
+    barSpacingPerc(x) <- 15
+  }
+  x <- scaleSpark(x, vMin=vMin, vMax=vMax)
+  x
+}
 newSparkBox <- function(width=NULL, height=NULL, values=NULL, padding=NULL, boxOutCol=NULL,
     boxMedCol=NULL, boxShowOut=NULL, boxCol=NULL, boxLineWidth=NULL,
     vMin=NULL, vMax=NULL,outputType="html") {

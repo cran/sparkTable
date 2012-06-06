@@ -5,9 +5,10 @@
 \alias{plotSparks,sparkbar-method}
 \alias{plotSparks,sparkbox-method}
 \alias{plotSparks,sparkline-method}
-\title{Plot objects of class 'sparkline', 'sparkbar' or 'sparkbox'}
+\alias{plotSparks,sparkhist-method}
+\title{Plot objects of class 'sparkline', 'sparkbar', 'sparkhist' or 'sparkbox'}
 \description{
-  Function that calls plot-methods for objects of class 'sparkline', 'sparkbar' or 'sparkbox'.
+  Function that calls plot-methods for objects of class 'sparkline', 'sparkbar', 'sparkhist' or 'sparkbox'.
 }
 \usage{
 	plotSparks(object, outputType='pdf', filename='testSpark', ...) 

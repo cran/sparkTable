@@ -103,6 +103,8 @@ setClass(
 	},	
 	contains="spark"
 )
+setClass(
+    Class="sparkhist",contains="sparkbar")
 
 setClass(
 	Class="sparkbox",
@@ -158,8 +160,8 @@ setClass(
 		if ( !is.null(object@tableContent) ) {
 			con <- object@tableContent
 			for(i in 1:length(con)){
-				if(!class(con[[i]])%in%c("sparkline","sparkbox","sparkbar","function"))
-					stop("'tableContent' must be a list with elements of class 'sparkline','sparkbox','sparkbar' or 'function'\n")
+				if(!class(con[[i]])%in%c("sparkline","sparkbox","sparkbar","sparkhist","function"))
+					stop("'tableContent' must be a list with elements of class 'sparkline','sparkbox','sparkbar','sparkhist' or 'function'\n")
 				
 			}
 		}
@@ -196,8 +198,8 @@ setClass(
 		if ( !is.null(object@tableContent) ) {
 			con <- object@tableContent
 			for(i in 1:length(con)){
-				if(!class(con[[i]])%in%c("sparkline","sparkbox","sparkbar","function"))
-					stop("'tableContent' must be a list with elements of class 'sparkline','sparkbox','sparkbar' or 'function'\n")
+				if(!class(con[[i]])%in%c("sparkline","sparkbox","sparkbar","sparkhist","function"))
+					stop("'tableContent' must be a list with elements of class 'sparkline','sparkbox','sparkbar','sparkhist' or 'function'\n")
 				
 			}
 		}

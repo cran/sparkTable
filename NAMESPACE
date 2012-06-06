@@ -1,5 +1,5 @@
 export(
-	newSparkLine,newSparkBar,newSparkBox,newSparkTable,reshapeExt,newGeoTable,
+	newSparkLine,newSparkBar,newSparkBox,newSparkTable,reshapeExt,newGeoTable,newSparkHist,
 	setParameter,getParameter,plotSparks,plotSparkTable,plotGeoTable
 	,optimal_grid_allocation,checkerplot
 )
