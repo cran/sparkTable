@@ -1,3 +1,76 @@
+### sparkTable summary
+setGeneric("summaryST", function(.Object, outputType="html", filename=NULL, graphNames="out",
+        hist=TRUE,boxplot=TRUE,min=TRUE,quantile=TRUE,median=TRUE,
+        mean=TRUE,max=TRUE,changeOrder=NULL,addFun=NULL,digits=2
+    ) { standardGeneric("summaryST")} )
+setMethod(
+    f="summaryST",
+    signature="data.frame",
+    def=function(.Object, outputType="html", filename=NULL, graphNames="out",
+        hist=TRUE,boxplot=TRUE,min=TRUE,quantile=TRUE,median=TRUE,
+        mean=TRUE,max=TRUE,changeOrder=NULL,addFun=NULL,digits=2) {
+      classdf <- unlist(lapply(as.list(.Object),class))
+      if(any(classdf!="numeric")){
+        warning("At the moment only the numerical variables of a data frame are used.")
+        .Object <- .Object[,classdf=="numeric"]
+      }
+      content <- list()
+      if(min){
+        content[[length(content)+1]] <- function(x)round(min(x,na.rm=TRUE),digits)
+        names(content)[length(content)] <- "Min"
+      }
+      if(quantile){
+        content[[length(content)+1]] <- function(x)round(quantile(x,.25,na.rm=TRUE),digits)
+        names(content)[length(content)] <- "1st Qu"
+      }
+      if(median){
+        content[[length(content)+1]] <- function(x)round(median(x,na.rm=TRUE),digits)
+        names(content)[length(content)] <- "Median"
+      }
+      if(mean){
+        content[[length(content)+1]] <- function(x)round(mean(x,na.rm=TRUE),digits)
+        names(content)[length(content)] <- "Mean"
+      }
+      if(quantile){
+        content[[length(content)+1]] <- function(x)round(quantile(x,.75,na.rm=TRUE),digits)
+        names(content)[length(content)] <- "3rd Qu"
+      }
+      if(hist){
+        content[[length(content)+1]] <- newSparkHist()
+        names(content)[length(content)] <- "Hist"
+      }
+      if(boxplot){
+        content[[length(content)+1]] <-  newSparkBox()
+        names(content)[length(content)] <- "Boxplot"
+      }
+      if(!is.null(addFun)){
+        for(i in 1:length(addFun)){
+          content[[length(content)+1]] <-  addFun[[i]]
+          names(content)[length(content)] <- names(addFun)[i]
+        }
+      }
+      if(!is.null(changeOrder)){
+        co <- list()
+        for(i in changeOrder)
+          co[[length(co)+1]] <- content[[i]]
+        nam <- names(content)
+        content <- co
+        names(content) <- nam[changeOrder]
+        
+      }
+      df <- data.frame()
+      for(i in 1:ncol(.Object)){
+        df <- rbind(df,cbind(rep(colnames(.Object)[i],nrow(.Object)),.Object[,i]))
+      }
+      colnames(df) <- c("CAT","value")
+      df <- reshapeExt(df, varying=list(2))
+      varType <- rep("value",length(content))
+      sparkTab <- newSparkTable(df, content, varType)
+     
+      plotSparkTable(sparkTab,  outputType=outputType, filename=filename, graphNames=graphNames)
+      invisible(sparkTab) 
+    })
+
 # allowes the user to specify a new sparkLine object
 ### default values for outputType tex here, html in classdefinitions
 newSparkLine <- function(width=NULL, height=NULL, values=NULL, padding=NULL, allColors=NULL,

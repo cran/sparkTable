@@ -1,17 +1,15 @@
 Package: sparkTable
 Type: Package
 Title: Sparklines and graphical tables for tex and html
-Version: 0.9.4
-Date: 2012-06-06
+Version: 0.9.5
+Date: 2012-06-26
 Author: Alexander Kowarik, Bernhard Meindl, Matthias Templ
-Maintainer: Alexander Kowarik <alexander.kowarik@statistik.gv.at>,
-        Bernhard Meindl <bernhard.meindl@statistik.gv.at>, Matthias
-        Templ <matthias.templ@statistik.gv.at>
+Maintainer: Alexander Kowarik <alexander.kowarik@statistik.gv.at>
 Description: Create Sparklines and graphical tables for documents and
         websites
 Depends: graphics, xtable, utils, grid, Cairo, methods, Rglpk,
         StatMatch,gridExtra,RGraphics,ggplot2,pixmap
 License: GPL
-Packaged: 2012-06-06 05:12:49 UTC; KOWA$
+Packaged: 2012-06-27 04:50:10 UTC; alex
 Repository: CRAN
-Date/Publication: 2012-06-06 05:40:49
+Date/Publication: 2012-06-27 05:32:23
