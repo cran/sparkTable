@@ -1,9 +1,9 @@
-0d3f1171c3cfe5814eadfb944d87cd25 *DESCRIPTION
-10a8e0b6fad48bf30bde5cf3bb1b0f79 *NAMESPACE
+2622f89e07c08c1712ba04be134ca077 *DESCRIPTION
+3b1a3666be983b130cc77eb8a8c8af1f *NAMESPACE
 57dbe4620aabf70c647e5c15593fece2 *R/auxFunctions.r
 fcee56d89e83c1162aa4139719c60b99 *R/checkerplot.R
 4e9876fc74a1192be00c35436de016a3 *R/classes.r
-08688aca72c19050356307188201aa13 *R/exports.r
+b234720a0f3aac04b3c67e2d816d6d82 *R/exports.r
 924ac2fed11538325c3c209a740babd7 *R/methods.r
 b9518bf14c24621a87a52bc7cc68f736 *R/optimal_grid_allocation.R
 123b7486b348f47c55fe3065122da618 *data/EU_data.RData
@@ -115,7 +115,7 @@ a9fc042aeb8e0d4dcdc5ae0789ebde42 *man/newSparkBar.Rd
 d36d8c9ab283ab6d06c3adb5effcdcb1 *man/newSparkTable.Rd
 ddb533085d5998b21adbd45b3ea81049 *man/optimal_grid_allocation.Rd
 e84cdba77514bc4176fa7eaef1695cd5 *man/plotGeoTable.Rd
-b7ceb46bea11642ded331bb9ca4b1602 *man/plotSparkTable.Rd
+a8a40fe71213c90b41fc4c822e465ff4 *man/plotSparkTable.Rd
 40ff8e7f6199de896fd78f7235cb7022 *man/plotSparks.Rd
 21ccd3b69495aad901bf18d9a9014b13 *man/reshapeExt.Rd
 f3bebb2fa94206f359c385410f8b96c4 *man/setParameter.Rd
@@ -123,3 +123,4 @@ c5f36fa3d8bc442ea3d8241be6d2ad81 *man/sparkTable-class.Rd
 a97307d7a9fe70cc0a2319ab26056ae9 *man/sparkbar-class.Rd
 d4042ce487f59aef499cb754f98488de *man/sparkbox-class.Rd
 213b80e17540e7f7b9f36e90ef0266eb *man/sparkline-class.Rd
+c6299f03c7406787da88b9737b164901 *man/summaryST.Rd

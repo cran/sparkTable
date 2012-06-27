@@ -23,7 +23,7 @@
   \item{...}{additional parameters to be passed}
 }
 \author{Bernhard Meindl, Alexander Kowarik, Statistics Austria }
-
+\seealso{\code{\link{summaryST}}}
 \examples{
 	data(pop,package="sparkTable")
 	b <- newSparkBox()
