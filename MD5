@@ -1,10 +1,10 @@
-2622f89e07c08c1712ba04be134ca077 *DESCRIPTION
+29e84a91373d280c8c13aac23a29486a *DESCRIPTION
 3b1a3666be983b130cc77eb8a8c8af1f *NAMESPACE
 57dbe4620aabf70c647e5c15593fece2 *R/auxFunctions.r
-fcee56d89e83c1162aa4139719c60b99 *R/checkerplot.R
+d3265ca4910cb2b77d750fc8c438a6e0 *R/checkerplot.R
 4e9876fc74a1192be00c35436de016a3 *R/classes.r
 b234720a0f3aac04b3c67e2d816d6d82 *R/exports.r
-924ac2fed11538325c3c209a740babd7 *R/methods.r
+e2703f6fb281c0a0237dd184345f264d *R/methods.r
 b9518bf14c24621a87a52bc7cc68f736 *R/optimal_grid_allocation.R
 123b7486b348f47c55fe3065122da618 *data/EU_data.RData
 197f6d6bfd397d0ef5f7286536a2ef92 *data/USdata1.RData
@@ -107,7 +107,7 @@ a75b00c72cf7d77e531af0db80e40056 *inst/etc/Flaggen/USStates/VA.pnm
 34747457dfb2e543d849531ee9a7e1b9 *inst/etc/Flaggen/USStates/WV.pnm
 313f8a0a5d795fe371b9b32d0c788ce7 *inst/etc/Flaggen/USStates/WY.pnm
 3043f5393c3dedf417de665acdf07e80 *man/brp.Rd
-09452956b06073610e580728317720d1 *man/checkerplot.Rd
+0c714140dd987c48def5f06ee55b0772 *man/checkerplot.Rd
 7bc7fca9fe968fbbad148d44cf77108e *man/geoTable-class.Rd
 63753b33b00b1961511ec8e04b7ed565 *man/getParameter.Rd
 88097eb2a70873107f288f3cf24f86f6 *man/newGeoTable.Rd

@@ -21,6 +21,8 @@ checkerplot <- function(data, cols=5, rows=5, geom="line", errorbar=FALSE, title
 		                xbreaks=NULL, xlabels=NULL, ybreaks=NULL, ylabels=NULL,
 		                ymin=NULL, ymax=NULL, img=NULL, aes_geom=NULL, formatter=NULL, 
 						margin_yaxis=0,margin_yaxis2=0,margin_xaxis=0,margin_xaxis2=0, opts=NULL, ...){
+  x<-y<-NULL
+  
   
   grid.newpage() 
   if(geom=="line" && errorbar) stop("errorbars are not supported with geom line")
@@ -171,7 +173,8 @@ checkerplot <- function(data, cols=5, rows=5, geom="line", errorbar=FALSE, title
             y_blubb = rep(0, length(unique(xbreaks)))
             df_blubb = as.data.frame(cbind(unique(xbreaks), y_blubb))
             names(df_blubb) <- c("x","y")
-            p = ggplot(df_blubb, aes(x=x, y=y, group=label))
+            #p = ggplot(df_blubb, aes(x=x, y=y, group=label))
+            p = ggplot(df_blubb, aes(x=x, y=y))
           }
         
           p = p + geom_line(aes_geom)  
@@ -253,7 +256,7 @@ checkerplot <- function(data, cols=5, rows=5, geom="line", errorbar=FALSE, title
           yLim_min = 0 
           p = p + ylim(yLim_min, yLim_max) 
           
-          p = p + opts(legend.position = "none")
+          p = p + theme(legend.position = "none")
           if(geom=="bar"){
 			  if(errorbar) limits <- aes(ymax = y + y*0.1, ymin=y - y*0.1)    # added
             p = p + geom_bar(stat="identity", position="dodge") 
@@ -300,11 +303,15 @@ checkerplot <- function(data, cols=5, rows=5, geom="line", errorbar=FALSE, title
         }
         
         # make sure, that all y-axis are equally scaled 
-        if(!is.null(formatter)){
-            p = p + scale_y_continuous(limits=c(yLim_min,yLim_max), breaks=ybreaks,labels=ylabels, formatter=formatter)
-          }else{
-            p = p + scale_y_continuous(limits=c(yLim_min,yLim_max), breaks=ybreaks,labels=ylabels)
-        }
+        #if(!is.null(formatter)){
+        #    cat("1\n")
+        #    p = p + scale_y_continuous(limits=c(yLim_min,yLim_max), breaks=ybreaks,labels=ylabels, formatter=formatter)
+        #    cat("2\n")
+        #  }else{
+        #    cat("3\n")
+        #    p = p + scale_y_continuous(limits=c(yLim_min,yLim_max), breaks=ybreaks,labels=ylabels)
+        #    cat("4\n")
+        #}
         
         #------------------------------------------------------------------------------
         #in the following code segment the four different plot representations are defined
@@ -318,20 +325,20 @@ checkerplot <- function(data, cols=5, rows=5, geom="line", errorbar=FALSE, title
         #plot.margin property of the opts-function for the ggplot2 object is used 
         #------------------------------------------------------------------------------
         if(i==2 && j==(nrows-2)){ #plot y-axis labels and x-axis 
-          p = p + opts(plot.margin = unit(c(0, 0, -1.8+margin_xaxis, (-2.2+margin_yaxis)), "lines"))
+          p = p + theme(plot.margin = unit(c(0, 0, -1.8+margin_xaxis, (-2.2+margin_yaxis)), "lines"))
         }else if(i==2){ #plot y-axis
-          p = p + opts(axis.text.x = theme_blank())
-          p = p + opts(plot.margin = unit(c(0, 0, -1.5+margin_xaxis2, (-2.2+margin_yaxis)), "lines")) 
+          p = p + theme(axis.text.x = element_blank())
+          p = p + theme(plot.margin = unit(c(0, 0, -1.5+margin_xaxis2, (-2.2+margin_yaxis)), "lines")) 
         }else if(j==(nrows-2)){ #plot x-axis
-          p = p + opts(axis.text.y = theme_blank())
-          p = p + opts(plot.margin = unit(c(0, 0, -1.8+margin_xaxis, -1.3+margin_yaxis2), "lines"))             
+          p = p + theme(axis.text.y = element_blank())
+          p = p + theme(plot.margin = unit(c(0, 0, -1.8+margin_xaxis, -1.3+margin_yaxis2), "lines"))             
         }else { # plot no axis
-          p = p + opts(axis.text.x = theme_blank(), axis.text.y = theme_blank())
-          p = p + opts(plot.margin = unit(c(0, 0, -1.5+margin_xaxis2, -1.3+margin_yaxis2), "lines"))
+          p = p + theme(axis.text.x = element_blank(), axis.text.y = element_blank())
+          p = p + theme(plot.margin = unit(c(0, 0, -1.5+margin_xaxis2, -1.3+margin_yaxis2), "lines"))
         }
               
         # no x/y-axis labels 
-        p = p + xlab("") + ylab("") + opts(legend.position = "none")
+        p = p + xlab("") + ylab("") +theme(legend.position = "none")
               
         #add user defined opts to ggplot2 object 
         if(!is.null(opts)){
@@ -339,7 +346,7 @@ checkerplot <- function(data, cols=5, rows=5, geom="line", errorbar=FALSE, title
         }
         
         if(geom=="line" || geom=="bar" || geom=="point"){
-          p1 = ggplotGrob(p) 
+          p1 = ggplotGrob(p)
           grid.draw(p1)
           grid.lines(x=unit(c(0,1),"npc"), y=unit(c(0,0),"npc"))
           grid.lines(x=unit(c(0,1),"npc"), y=unit(c(1,1),"npc"))
