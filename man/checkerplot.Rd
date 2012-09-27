@@ -2,7 +2,7 @@
 \alias{checkerplot}
 \title{Checkerplot}
 \description{
-   checkerplot
+   Visualization of regional indicators with the checkerplot
 }
 \usage{
   checkerplot(data, cols=5, rows=5, geom="line", errorbar=FALSE, title=NULL, title.size=20,
@@ -65,20 +65,18 @@ dirflags = paste(searchpaths()[grep("sparkTable", searchpaths())], "/etc/Flaggen
     data_eu = rbind(data_eu,XX)
   }
 dirflags_eu=paste(dirflags,"EU/",sep="")
-\dontrun{
 checkerplot(data_eu, cols=8, rows=7, geom="line", img=dirflags_eu,
-            title = "Unemployment rate in Europe 1997 to 2008 (in \%)", title.size=18,
+            title = "Unemployment rate in Europe 1997 to 2008 (in perc)", title.size=18,
             ylabels=c(5,10,15,20),
 			ybreaks=c(5,10,15,20), xbreaks=c(1998,2001,2004,2007), xlabels=c("98","01","04","07"),
     		margin_yaxis=-0.05, margin_yaxis2=-0.2,
     		margin_xaxis=-0.4, margin_xaxis2=0 )
-}
 
 ### EXAMPLE for US data
   data(coordUS)
   ## rearrange states which are far away:
-  coordUS[coordUS$state \%in\% c("AK"),"x"] <- 0.4  ## rearrange Alaska
-  coordUS[coordUS$state \%in\% c("HI"),"x"] <- 0.5       ## rearrange Hawaii
+  coordUS[coordUS$state=="AK","x"] <- 0.4  ## rearrange Alaska
+  coordUS[coordUS$state=="HI","x"] <- 0.5       ## rearrange Hawaii
   ## optimal arrangement of the states:
   order <- optimal_grid_allocation(coordUS[,1:2],13,6) 
   order <- data.frame(names=coordUS$state,order=order) 
@@ -95,12 +93,9 @@ checkerplot(data_eu, cols=8, rows=7, geom="line", img=dirflags_eu,
   ## define directory with flags (pnm's):
   dirflags_us=paste(dirflags,"USStates/",sep="")
   USdata2[,3] <- USdata2[,3]*100
-  \dontrun{
   checkerplot(USdata2[,-2], cols=13, rows=6, geom="bar", 
-            title="US private health insurance (in \% of the population)",
+            title="US private health insurance (in percent of the population)",
             title.size=18, ylabels=c(30,60,90), ybreaks=c(30,60,90), 
             img=dirflags_us, margin_yaxis=-0.05, margin_yaxis2=-0.2,
-    		margin_xaxis=-0.4, margin_xaxis2=0,  
-    		formatter=function(x,...) {sprintf("\%.1f", x)})
-}
+    		margin_xaxis=-0.4, margin_xaxis2=0) 
 }
