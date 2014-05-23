@@ -1,47 +1,51 @@
 ### sparkTable summary
 setGeneric("summaryST", function(.Object, outputType="html", filename=NULL, graphNames="out",
         hist=TRUE,boxplot=TRUE,min=TRUE,quantile=TRUE,median=TRUE,
-        mean=TRUE,max=TRUE,changeOrder=NULL,addFun=NULL,digits=2
+        mean=TRUE,max=TRUE,changeOrder=NULL,addFun=NULL,digits=2,scaleHistByCol=FALSE,scaleBoxByCol=FALSE
     ) { standardGeneric("summaryST")} )
 setMethod(
     f="summaryST",
     signature="data.frame",
     def=function(.Object, outputType="html", filename=NULL, graphNames="out",
         hist=TRUE,boxplot=TRUE,min=TRUE,quantile=TRUE,median=TRUE,
-        mean=TRUE,max=TRUE,changeOrder=NULL,addFun=NULL,digits=2) {
+        mean=TRUE,max=TRUE,changeOrder=NULL,addFun=NULL,digits=2,scaleHistByCol=FALSE,scaleBoxByCol=FALSE) {
       classdf <- unlist(lapply(as.list(.Object),class))
-      if(any(classdf!="numeric")){
+      if(!all(classdf%in%c("integer","numeric"))){
         warning("At the moment only the numerical variables of a data frame are used.")
         .Object <- .Object[,classdf=="numeric"]
       }
       content <- list()
       if(min){
-        content[[length(content)+1]] <- function(x)round(min(x,na.rm=TRUE),digits)
-        names(content)[length(content)] <- "Min"
+        content[[length(content)+1]] <- eval(parse(text=paste("function(x)round(min(x,na.rm=TRUE),digits=",digits,")")))
+        names(content)[length(content)] <- "min"
       }
       if(quantile){
-        content[[length(content)+1]] <- function(x)round(quantile(x,.25,na.rm=TRUE),digits)
-        names(content)[length(content)] <- "1st Qu"
+        content[[length(content)+1]] <- eval(parse(text=paste("function(x)round(quantile(x,.25,na.rm=TRUE),digits=",digits,")")))
+        names(content)[length(content)] <- "1st_q"
       }
       if(median){
-        content[[length(content)+1]] <- function(x)round(median(x,na.rm=TRUE),digits)
-        names(content)[length(content)] <- "Median"
+        content[[length(content)+1]] <- eval(parse(text=paste("function(x)round(median(x,na.rm=TRUE),digits=",digits,")")))
+        names(content)[length(content)] <- "median"
       }
       if(mean){
-        content[[length(content)+1]] <- function(x)round(mean(x,na.rm=TRUE),digits)
-        names(content)[length(content)] <- "Mean"
+        content[[length(content)+1]] <- eval(parse(text=paste("function(x)round(mean(x,na.rm=TRUE),digits=",digits,")")))
+        names(content)[length(content)] <- "mean"
       }
       if(quantile){
-        content[[length(content)+1]] <- function(x)round(quantile(x,.75,na.rm=TRUE),digits)
-        names(content)[length(content)] <- "3rd Qu"
+        content[[length(content)+1]] <- eval(parse(text=paste("function(x)round(quantile(x,.75,na.rm=TRUE),digits=",digits,")")))
+        names(content)[length(content)] <- "3rd_q"
+      }
+      if(max){
+        content[[length(content)+1]] <- eval(parse(text=paste("function(x)round(max(x,na.rm=TRUE),digits=",digits,")")))
+        names(content)[length(content)] <- "max"
       }
       if(hist){
         content[[length(content)+1]] <- newSparkHist()
-        names(content)[length(content)] <- "Hist"
+        names(content)[length(content)] <- "hist"
       }
       if(boxplot){
         content[[length(content)+1]] <-  newSparkBox()
-        names(content)[length(content)] <- "Boxplot"
+        names(content)[length(content)] <- "boxplot"
       }
       if(!is.null(addFun)){
         for(i in 1:length(addFun)){
@@ -66,8 +70,12 @@ setMethod(
       df <- reshapeExt(df, varying=list(2))
       varType <- rep("value",length(content))
       sparkTab <- newSparkTable(df, content, varType)
-     
-      plotSparkTable(sparkTab,  outputType=outputType, filename=filename, graphNames=graphNames)
+      spr <- rep(FALSE,length(content))
+      if(scaleHistByCol)
+        spr[names(content)=="hist"] <- TRUE
+      if(scaleBoxByCol)
+        spr[names(content)=="boxplot"] <- TRUE
+      plotSparkTable(sparkTab,  outputType=outputType, filename=filename, graphNames=graphNames,scaleByCol=spr)
       invisible(sparkTab) 
     })
 

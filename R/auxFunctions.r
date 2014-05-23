@@ -22,6 +22,7 @@ banking <- function (diff.x, diff.y)  {
 	r
 }
 
+##Original from package xtable, Author: David Dahl dahl@stat.tamu.edu 
 ### Only a minor adaption, namely added parameters:
 #wider.columns=NULL,column.width=NULL,
 #skip.columns=NULL,right.border=NULL,left.border=NULL,

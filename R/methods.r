@@ -136,10 +136,10 @@ setMethod(
       if ( is.null(vMax))
         vMax <- max(.Object@values, na.rm=TRUE)			
       
-      if ( vMin > min(.Object@values, na.rm=TRUE) )
-        stop()
-      if ( vMax < max(.Object@values, na.rm=TRUE) )
-        stop()			
+      #if ( vMin > min(.Object@values, na.rm=TRUE) )
+      #  stop()
+      #if ( vMax < max(.Object@values, na.rm=TRUE) )
+      #  stop()			
       
       len <- length(.Object@values)
       .Object@availableWidth <- .Object@width - .Object@width*((.Object@padding[3])/100) - .Object@width*((.Object@padding[4])/100)
@@ -203,42 +203,43 @@ setMethod(
     f="scaleSpark",
     signature="sparkhist",
     def=function(.Object, vMin, vMax) {
-      vals <- hist(.Object@values,plot=FALSE)$counts
+      hh <- hist(.Object@values,plot=FALSE)
+      vals <- hh$counts
+      mids <- hh$mids
       if ( is.null(vMin))
-        vMin <- min(vals, na.rm=TRUE)
+        vMin <- min(mids, na.rm=TRUE)
       if ( is.null(vMax))
-        vMax <- max(vals, na.rm=TRUE)			
-      
-      if ( vMin > min(vals, na.rm=TRUE) )
-        stop()
-      if ( vMax < max(vals, na.rm=TRUE) )
-        stop()	
+        vMax <- max(mids, na.rm=TRUE)			
       
       len <- length(vals)		
       .Object@availableWidth <- .Object@width - .Object@width*((.Object@padding[3])/100) - .Object@width*((.Object@padding[4])/100)
       .Object@availableHeight <- .Object@height - .Object@height*((.Object@padding[1])/100) - .Object@height*((.Object@padding[2])/100)
+      lowerCutOff <-((min(mids)-vMin)/(vMax-vMin))*.Object@availableWidth
+      upperCutOff <- ((vMax-max(mids))/(vMax-vMin))*.Object@availableWidth
+      .Object@availableWidth <- .Object@availableWidth - lowerCutOff - upperCutOff
       .Object@stepWidth <- (.Object@availableWidth * (.Object@barSpacingPerc/100))/(len-1)
-      .Object@barWidth <- (.Object@availableWidth - .Object@stepWidth*(len-1))/len	
-      .Object@coordsX <- (0:(len-1))*.Object@barWidth + .Object@stepWidth* (0:(len-1)) + .Object@width*(.Object@padding[3]/100) 
+      .Object@barWidth <- (.Object@availableWidth - .Object@stepWidth*(len-1))/len
+      .Object@coordsX <- lowerCutOff+(0:(len-1))*.Object@barWidth + .Object@stepWidth* (0:(len-1)) + .Object@width*(.Object@padding[3]/100)
+      
       
       v <- vals
       mid <- floor(.Object@height / 2)	
       
       # all positive?
       if ( all(v >= 0, na.rm=TRUE) ) {
-        steps <- .Object@availableHeight / vMax 
+        steps <- .Object@availableHeight / max(vals) 
         .Object@coordsY <- v * steps + .Object@height*(.Object@padding[2]/100)
         .Object@coordsY <- .Object@coordsY - ((.Object@height-.Object@availableHeight)/2)
       }
       # all negative
       else if ( all(v <= 0, na.rm=TRUE) ) {
-        steps <- abs(.Object@availableHeight / vMin)
+        steps <- abs(.Object@availableHeight / min(vals))
         .Object@coordsY <- v * steps - .Object@height*(.Object@padding[1]/100)
         .Object@coordsY <- .Object@coordsY + ((.Object@height-.Object@availableHeight)/2)
       }	
       # negative and positive values
       else {
-        absMax <- max(abs(c(vMin,vMax)), na.rm=TRUE)
+        absMax <- max(abs(c(min(vals),max(vals))), na.rm=TRUE)
         steps <- (.Object@availableHeight)/ 2 / absMax
         .Object@coordsY <- v * steps		
       }
@@ -800,7 +801,7 @@ setMethod(
             x=unit(0, "inches"),
             y=unit(quantile(.Object@coordsY, 0.25), "inches"),
             width=unit(.Object@width, "inches"), 
-            height=unit(quantile(.Object@coordsY, 0.75)-quantile(.Object@coordsY, 0.25), "inches"), just=c("left","bottom"), gp=gpar(fill=.Object@allColors[6]))
+            height=unit(quantile(.Object@coordsY, 0.75,na.rm=TRUE)-quantile(.Object@coordsY, 0.25,na.rm=TRUE), "inches"), just=c("left","bottom"), gp=gpar(fill=.Object@allColors[6]))
       }				
       
       # plot lines
@@ -1046,11 +1047,11 @@ setMethod(
       dev.off()
     }	
 )
-setGeneric("plotSparkTable", function(object, outputType="html", filename=NULL, graphNames="out", ...) { standardGeneric("plotSparkTable")} )
+setGeneric("plotSparkTable", function(object, outputType="html", filename=NULL, graphNames="out",infonote=TRUE,scaleByCol=FALSE, ...) { standardGeneric("plotSparkTable")} )
 setMethod(
     f='plotSparkTable',
     signature='sparkTable',
-    definition=function(object, outputType="html", filename=NULL, graphNames="out", ...) {
+    definition=function(object, outputType="html", filename=NULL, graphNames="out",infonote=TRUE, scaleByCol=FALSE,...) {
       .Object <- object
       if ( !outputType %in% c("tex", "html") )
         stop("please provide a valid output type!\n")
@@ -1072,9 +1073,9 @@ setMethod(
       
       vMin <- apply(.Object@dataObj[,3:ncol(.Object@dataObj)],2, min, na.rm=T)
       vMax <- apply(.Object@dataObj[,3:ncol(.Object@dataObj)],2, max, na.rm=T)
-      
       allGroups <- unique(.Object@dataObj[,1])
-      
+      if(length(scaleByCol)==1)
+        scaleByCol <- rep(scaleByCol,nrCols)
       for ( i in 1:nrCols) {
         plotObj[[i]] <- list()
         colIndex <- match(.Object@varType[i], colnames(.Object@dataObj))
@@ -1082,7 +1083,7 @@ setMethod(
           fn <- paste(graphNames,i,"-",j, sep="")
           values <- (as.numeric(.Object@dataObj[.Object@dataObj[,1]==allGroups[j], colIndex]))
           if ( class(.Object@tableContent[[i]]) == "sparkline" )  {
-            tmpObj <- newSparkLine(values=values, vMin=vMin[colIndex-2], vMax=vMax[colIndex-2])
+            tmpObj <- newSparkLine(values=values)#, vMin=vMin[colIndex-2], vMax=vMax[colIndex-2])
             allColors(tmpObj) <- allColors(.Object@tableContent[[i]])
             pointWidth(tmpObj) <- pointWidth(.Object@tableContent[[i]])
             lineWidth(tmpObj) <- lineWidth(.Object@tableContent[[i]])
@@ -1090,6 +1091,9 @@ setMethod(
             width(tmpObj) <- width(.Object@tableContent[[i]])
             height(tmpObj) <- height(.Object@tableContent[[i]])
             padding(tmpObj) <- padding(.Object@tableContent[[i]])
+            if(scaleByCol[i]){
+              tmpObj <- scaleSpark(tmpObj,vMin=vMin[colIndex-2],vMax=vMax[colIndex-2])
+            }
             plotObj[[i]][[j]] <- tmpObj
             if(outputType=="tex"){
               plotSparks(plotObj[[i]][[j]], outputType='pdf', filename=fn)
@@ -1099,12 +1103,15 @@ setMethod(
               m[j,i] <- paste('<img src="', fn, '.png">',sep="")  
             }else stop("WTF happened now?")
           }else if ( class(.Object@tableContent[[i]]) == "sparkbar" )  {
-            tmpObj <- newSparkBar(values=values, vMin=vMin[colIndex-2], vMax=vMax[colIndex-2])
+            tmpObj <- newSparkBar(values=values)
             barCol(tmpObj) <- barCol(.Object@tableContent[[i]])
             barSpacingPerc(tmpObj) <- barSpacingPerc(.Object@tableContent[[i]])
             width(tmpObj) <- width(.Object@tableContent[[i]])
             height(tmpObj) <- height(.Object@tableContent[[i]])
             padding(tmpObj) <- padding(.Object@tableContent[[i]])
+            if(scaleByCol[i]){
+              tmpObj <- scaleSpark(tmpObj,vMin=vMin[colIndex-2],vMax=vMax[colIndex-2])
+            }
             plotObj[[i]][[j]] <- tmpObj					
             if(outputType=="tex"){
               plotSparks(plotObj[[i]][[j]], outputType='pdf', filename=fn)
@@ -1114,13 +1121,16 @@ setMethod(
               m[j,i] <- paste('<img src="', fn, '.png">',sep="")
             }else stop("WTF happened now?")
           }else if ( class(.Object@tableContent[[i]]) == "sparkbox" )  {
-            tmpObj <- newSparkBox(values=values, vMin=vMin[colIndex-2], vMax=vMax[colIndex-2])
+            tmpObj <- newSparkBox(values=values)
             boxCol(tmpObj) <- boxCol(.Object@tableContent[[i]])
             boxLineWidth(tmpObj) <- boxLineWidth(.Object@tableContent[[i]])
             outCol(tmpObj) <- outCol(.Object@tableContent[[i]])
             width(tmpObj) <- width(.Object@tableContent[[i]])
             height(tmpObj) <- height(.Object@tableContent[[i]])
             padding(tmpObj) <- padding(.Object@tableContent[[i]])
+            if(scaleByCol[i]){
+              tmpObj <- scaleSpark(tmpObj,vMin=vMin[colIndex-2],vMax=vMax[colIndex-2])
+            }
             plotObj[[i]][[j]] <- tmpObj
             if(outputType=="tex"){
               plotSparks(plotObj[[i]][[j]], outputType='pdf', filename=fn)
@@ -1137,12 +1147,15 @@ setMethod(
             else
               m[j,i] <- paste("",plotObj[[i]][[j]],"",sep= "")
           }else if ( class(.Object@tableContent[[i]]) == "sparkhist" )  {
-            tmpObj <- newSparkHist(values=values)#, vMin=vMin[colIndex-2], vMax=vMax[colIndex-2])
+            tmpObj <- newSparkHist(values=values)
             barCol(tmpObj) <- barCol(.Object@tableContent[[i]])
             barSpacingPerc(tmpObj) <- barSpacingPerc(.Object@tableContent[[i]])
             width(tmpObj) <- width(.Object@tableContent[[i]])
             height(tmpObj) <- height(.Object@tableContent[[i]])
             padding(tmpObj) <- padding(.Object@tableContent[[i]])
+            if(scaleByCol[i]){
+              tmpObj <- scaleSpark(tmpObj,vMin=vMin[colIndex-2],vMax=vMax[colIndex-2])
+            }
             plotObj[[i]][[j]] <- tmpObj					
             if(outputType=="tex"){
               plotSparks(plotObj[[i]][[j]], outputType='pdf', filename=fn)
@@ -1157,12 +1170,14 @@ setMethod(
       }			
       colnames(m) <- TH
       if(outputType=="tex"){
+        outputMat <- m
         print(xT <- xtable(m), sanitize.text.function = function(x){x})
-      
-		cat("\n\nInformation: please do not forget to add the following command before \\begin{document} in your tex-file:\n\n")
-		cat('\\newcommand{\\graph}[3]{ \\raisebox{-#1mm}{\\includegraphics[height=#2em]{#3}}}\n\n')	
-		
-	  }else if(outputType=="html"){
+        if(infonote){  
+          cat("\n\nInformation: please do not forget to add the following command before \\begin{document} in your tex-file:\n\n")
+          cat('\\newcommand{\\graph}[3]{ \\raisebox{-#1mm}{\\includegraphics[height=#2em]{#3}}}\n\n')	
+        }
+      }else if(outputType=="html"){
+        outputMat <- m
         print(xT <- xtable(m), sanitize.text.function = function(x){x},type="html")
       }else stop("WTF happened now?")
       if(!is.null(filename)){
@@ -1188,6 +1203,7 @@ setMethod(
         }
         sink()
       }
+      invisible(outputMat)
     }	
 )
 
@@ -1366,6 +1382,7 @@ setMethod(
         changeIT <- NULL
       m <- mm
       hline <- unique(c(0,(1:max(GO[,1])*nrow(mGes[[1]]))+1:max(GO[,1])))
+      outputMat <- m
       xT <- xtable(m)
       align(xT)[] <- "c"
       if(ncol(mGes[[1]])>1){
@@ -1386,11 +1403,11 @@ setMethod(
       if(outputType=="tex"){
         print.xtable2(xT, sanitize.text.function = function(x){x},hline.after=hline,include.rownames=include.rownames,column.width=column.width,
             include.colnames=include.colnames,skip.columns=skipIT,transpose=transpose,rownames=rownames,colnames=colnames)
-	
-		cat("\n\nInformation: please do not forget to add the following command before \\begin{document} in your tex-file:\n\n")
-		cat('\\newcommand{\\graph}[3]{ \\raisebox{-#1mm}{\\includegraphics[height=#2em]{#3}}}\n\n')	
-
-	  }else if(outputType=="html"){
+        
+        cat("\n\nInformation: please do not forget to add the following command before \\begin{document} in your tex-file:\n\n")
+        cat('\\newcommand{\\graph}[3]{ \\raisebox{-#1mm}{\\includegraphics[height=#2em]{#3}}}\n\n')	
+        
+      }else if(outputType=="html"){
         print.xtable2(xT, sanitize.text.function = function(x){x},type="html",include.rownames=include.rownames,
             include.colnames=include.colnames,skip.columns=skipIT,wider.columns=changeIT,column.width=column.width,
             hline.after=hline,transpose=transpose,rownames=rownames,colnames=colnames)
@@ -1428,5 +1445,6 @@ setMethod(
         }
         sink()
       }
+      invisible(outputMat)
     }	
 )
