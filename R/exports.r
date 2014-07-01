@@ -228,9 +228,25 @@ newSparkBox <- function(width=NULL, height=NULL, values=NULL, padding=NULL, boxO
 
 # use reshapeExt to transform data that are already in 'long' 
 # format and required attributes
-reshapeExt <- function(x,timeValues=NULL,geographicVar=NULL,...){
+# based on reshape from package 'stats'
+reshapeExt <- function(
+    data,
+    timeValues = NULL,
+    geographicVar=NULL,
+    varying = NULL, v.names = NULL, timevar = "time",
+    idvar = "id", ids = 1:NROW(data),
+    drop = NULL, new.row.names = NULL,
+    sep = ".",
+    split = if (sep == "") {
+          list(regexp = "[A-Za-z][0-9]", include = TRUE)
+        } else {
+          list(regexp = sep, include = FALSE, fixed = TRUE)}
+  ){
+    x <- data
   if(is.null(geographicVar)){
-    dat <- reshape(x,direction="long",...)
+    dat <- reshape(x,direction="long",varying=varying,v.names=v.names,timevar=timevar,
+        idvar=idvar,ids=ids, drop=drop,new.row.names=new.row.names,
+        sep=sep,split=split)
     n1 <- (nrow(dat)/length(unique(dat[,1])))
     if(is.null(timeValues))
       timeValues <- 1:n1 
@@ -244,7 +260,9 @@ reshapeExt <- function(x,timeValues=NULL,geographicVar=NULL,...){
   }else{
     dat <- list()
     for(co in unique(x[,geographicVar])){
-      dat[[co]] <- reshape(x[x[,geographicVar]==co,],direction="long",...)
+      dat[[co]] <- reshape(x[x[,geographicVar]==co,],direction="long",varying=varying,v.names=v.names,timevar=timevar,
+          idvar=idvar,ids=ids, drop=drop,new.row.names=new.row.names,
+          sep=sep,split=split)
       n1 <- (nrow(dat[[co]])/length(unique(dat[[co]][,1])))
       if(is.null(timeValues))
         timeValues <- 1:n1 
