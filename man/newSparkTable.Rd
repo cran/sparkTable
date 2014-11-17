@@ -2,7 +2,7 @@
 \alias{newSparkTable}
 \title{Function to create new SparkTable object}
 \description{
-	User-function to create objects of the class 'sparkTable'.
+  User-function to create objects of the class 'sparkTable'.
 }
 \usage{
   newSparkTable(dataObj, tableContent, varType)
@@ -13,24 +13,41 @@
   \item{varType}{a character vector containing variable names existing in dataObj.}
 }
 \author{Bernhard Meindl, Alexander Kowarik, Statistics Austria }
-		
-\seealso{\code{\link{plotSparkTable}}, \code{\link{plotSparks}}, \code{\link{setParameter}}, \code{\link{getParameter}}
+
+\seealso{\code{\link{plot}}, \code{\link{export}}, \code{\link{setParameter}}, \code{\link{getParameter}}
 }
-				
+
 \examples{
-	#Population
-	data(pop)
-	b <- newSparkBox()
-	l <- newSparkLine()
-	bb <- newSparkBar()
-	content <- list(function(x) { round(mean(x),2) },
-		b,l,bb,
-		function(x) { round(tail(x,1),2) })
-	names(content) <- paste("column",1:5,sep="")
-	varType <- rep("value",5)
-	pop <- pop[,c("variable","value","time")]
-	pop$time <- as.numeric(as.character(pop$time))
-	xx <- reshapeExt(pop,idvar="variable", varying=list(2))
-	x1 <- newSparkTable(xx, content, varType)
-	plotSparkTable(x1, outputType="html", graphNames="out1")
+  \dontrun{
+  ##Soccer
+  data(AT_Soccer,package="sparkTable")
+  content <- list(
+    function(x) {sum(x)},
+    function(x) { round(sum(x),2) },
+    function(x) { round(sum(x),2) },
+    newSparkLine(), newSparkBar()
+  )
+  names(content) <- c("Points","ShotGoal","GetGoal","GoalDiff","WinLoose")
+  varType <- c("points","shotgoal","getgoal","goaldiff","wl")
+  x1 <- newSparkTable(AT_Soccer, content, varType)
+  showSparkTable(x1)
+  export(x1,outputType="html")
+        
+        
+  #Population
+  data(pop)
+  b <- newSparkBox()
+  l <- newSparkLine()
+  bb <- newSparkBar()
+  content <- list(function(x) { round(mean(x),2) },
+    b,l,bb,
+    function(x) { round(tail(x,1),2) })
+  names(content) <- paste("column",1:5,sep="")
+  varType <- rep("value",5)
+  pop <- pop[,c("variable","value","time")]
+  pop$time <- as.numeric(as.character(pop$time))
+  xx <- reshapeExt(pop,idvar="variable", varying=list(2))
+  x1 <- newSparkTable(xx, content, varType)
+  export(x1, outputType="html", graphNames="out1")
+  }
 }

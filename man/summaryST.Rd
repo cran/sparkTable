@@ -17,10 +17,10 @@ summaryST(.Object, outputType="html", filename=NULL, graphNames="out",
 \arguments{
   \item{.Object}{a data frame}
 \item{outputType}{a character vector of length one specifying the desired output format:
-	  \itemize{
-	  	\item 'tex': latex output is produced
-	  	\item 'html': html output is procuded
-	  }	
+    \itemize{
+      \item 'tex': latex output is produced
+      \item 'html': html output is procuded
+    }
   }
   \item{filename}{ the filename of the output (minus '.tex' or '.html'}
   \item{graphNames}{ the main part of the single graphic files that are produced (minus '-someIndex.extension'}
@@ -36,8 +36,8 @@ summaryST(.Object, outputType="html", filename=NULL, graphNames="out",
   \item{digits}{number of digits used for rounding}
   \item{scaleHistByCol}{TRUE/FALSE if the histograms of all variables should be on the same x-axis scale}
   \item{scaleBoxByCol}{TRUE/FALSE if the boxplots of all variables should be on the same x-axis scale}
-  
-  
+
+
 }
 \value{
 object of class 'sparkTable' for further customizing the output (with setParameter)
@@ -45,8 +45,9 @@ object of class 'sparkTable' for further customizing the output (with setParamet
 \author{Alexander Kowarik, Statistics Austria}
 
 
-\seealso{\code{\link{plotSparkTable}}}
+\seealso{\code{\link{export}}}
 \examples{
+\dontrun{
 data1 <- data.frame(x=rnorm(100),y=rlnorm(100),
   z=rbeta(100,1,1))
 #default summary table
@@ -60,7 +61,7 @@ summaryST(data1,filename="st1c",addFun=list(var=function(x)round(var(x,na.rm=TRU
 data2 <- data.frame(x1=rnorm(100),x2=rnorm(100)+1,x3=rnorm(100)+5)
 summaryST(data2,filename="st1d",graphNames="out1d",scaleHistByCol=TRUE,scaleBoxByCol=TRUE)
 # the same results in a shiny app:
-\dontrun{
-runShinyApp(data2)
+
+showSparkTable(data2)
 }
 }
