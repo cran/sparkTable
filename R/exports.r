@@ -119,7 +119,8 @@ newSparkLine <- function(width=NULL, height=NULL, values=NULL, padding=NULL, all
   x
 }
 
-newSparkBar <- function(width=NULL, height=NULL, values=NULL, padding=NULL, barCol=NULL, barWidth=NULL, barSpacingPerc=NULL, vMin=NULL, vMax=NULL,outputType="html") {
+newSparkBar <- function(width=NULL, height=NULL, values=NULL, padding=NULL, barCol=NULL, barWidth=NULL, barSpacingPerc=NULL,
+    vMin=NULL, vMax=NULL,bgCol=NULL,outputType="html") {
   x <- new('sparkbar')
   if ( !is.null(width) ){
     width(x) <- width
@@ -150,11 +151,15 @@ newSparkBar <- function(width=NULL, height=NULL, values=NULL, padding=NULL, barC
   }else if(outputType=="tex"){
     barSpacingPerc(x) <- 15
   }
+  if ( !is.null(bgCol) ){
+    bgCol(x) <- bgCol
+  }
   x <- scaleSpark(x, vMin=vMin, vMax=vMax)
   x
 }
 
-newSparkHist <- function(width=NULL, height=NULL, values=NULL, padding=NULL, barCol=NULL, barWidth=NULL, barSpacingPerc=NULL, vMin=NULL, vMax=NULL,outputType="html") {
+newSparkHist <- function(width=NULL, height=NULL, values=NULL, padding=NULL, barCol=NULL, barWidth=NULL, barSpacingPerc=NULL,
+    vMin=NULL, vMax=NULL,bgCol=NULL,outputType="html") {
   x <- new('sparkhist')
   if ( !is.null(width) ){
     width(x) <- width
@@ -185,12 +190,15 @@ newSparkHist <- function(width=NULL, height=NULL, values=NULL, padding=NULL, bar
   }else if(outputType=="tex"){
     barSpacingPerc(x) <- 15
   }
+  if ( !is.null(bgCol) ){
+    bgCol(x) <- bgCol
+  }
   x <- scaleSpark(x, vMin=vMin, vMax=vMax)
   x
 }
 newSparkBox <- function(width=NULL, height=NULL, values=NULL, padding=NULL, boxOutCol=NULL,
     boxMedCol=NULL, boxShowOut=NULL, boxCol=NULL, boxLineWidth=NULL,
-    vMin=NULL, vMax=NULL,outputType="html") {
+    vMin=NULL, vMax=NULL,bgCol=NULL,outputType="html") {
   x <- new('sparkbox')
   if ( !is.null(width) ){
     width(x) <- width
@@ -222,6 +230,9 @@ newSparkBox <- function(width=NULL, height=NULL, values=NULL, padding=NULL, boxO
     boxShowOut(x) <- boxShowOut
   if ( !is.null(boxCol) )
     boxCol(x) <- boxCol
+  if ( !is.null(bgCol) ){
+    bgCol(x) <- bgCol
+  }
   x <- scaleSpark(x, vMin=vMin, vMax=vMax)
   x
 }
@@ -256,7 +267,17 @@ reshapeExt <- function(
           idvar=names(dat)[1]
       )
     }
-    dat[,attr(dat,"reshapeLong")[["timevar"]]] <- rep(timeValues,nrow(dat)/n1)
+    #dat[,attr(dat,"reshapeLong")[["timevar"]]] <- rep(timeValues,nrow(dat)/n1)
+    valTime <- 1
+    for(i in 1:NROW(dat)){
+      if(i>1){
+        if(dat[i,1]!=dat[i-1,1]){
+          valTime <- 1
+        }
+      }
+      dat[i,attr(dat,"reshapeLong")[["timevar"]]] <- valTime
+      valTime <- valTime + 1
+    }
   }else{
     dat <- list()
     for(co in unique(x[,geographicVar])){
@@ -376,6 +397,10 @@ setParameter <- function(object, value, type) {
   if ( type == 'barSpacingPerc' ) {
     barSpacingPerc(object) <- value
   }
+  # sparkbar,sparkbox, sparkhist  
+  if ( type == 'bgCol' ) {
+    bgCol(object) <- "value"
+  }
   # sparkTable-objects
   if ( type == 'dataObj' ) {
     dataObj(object) <- value
@@ -441,6 +466,11 @@ getParameter <- function(object, type) {
   if ( type == 'barSpacingPerc' ) {
     out <- barSpacingPerc(object)
   }
+  # sparkbar,sparkbox, sparkhist  
+  if ( type == 'bgCol' ) {
+    out <- bgCol(object)
+  }
+  
   # sparkTable-objects
   if ( type == 'dataObj' ) {
     out <- dataObj(object)
@@ -461,6 +491,7 @@ getParameter <- function(object, type) {
   if ( type == 'geographicOrder' ) {
     out <- geographicOrder(object)
   }
+
   out
 }
 

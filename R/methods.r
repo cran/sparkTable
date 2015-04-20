@@ -31,6 +31,8 @@ setGeneric('barWidth<-', function(object,value) {standardGeneric('barWidth<-')})
 setGeneric('barWidth', function(object,value) {standardGeneric('barWidth')})
 setGeneric('barSpacingPerc<-', function(object,value) {standardGeneric('barSpacingPerc<-')})
 setGeneric('barSpacingPerc', function(object,value) {standardGeneric('barSpacingPerc')})
+setGeneric('bgCol<-', function(object,value) {standardGeneric('bgCol<-')})
+setGeneric('bgCol', function(object,value) {standardGeneric('bgCol')})
 
 ### These generic functions are used for objects of class 'sparkbox'
 setGeneric('outCol<-', function(object,value) {standardGeneric('outCol<-')})
@@ -45,6 +47,8 @@ setGeneric('boxLineWidth<-', function(object,value) {standardGeneric('boxLineWid
 setGeneric('boxLineWidth', function(object,value) {standardGeneric('boxLineWidth')})
 setGeneric('boxShowOut<-', function(object,value) {standardGeneric('boxShowOut<-')})
 setGeneric('boxShowOut', function(object,value) {standardGeneric('boxShowOut')})
+setGeneric('bgCol<-', function(object,value) {standardGeneric('bgCol<-')})
+setGeneric('bgCol', function(object,value) {standardGeneric('bgCol')})
 
 ### These generic functions are used for objects of class 'sparkTable'
 setGeneric('dataObj<-', function(object,value) {standardGeneric('dataObj<-')})
@@ -147,17 +151,21 @@ setMethod(
       .Object@coordsX <- (0:(len-1))*.Object@stepWidth + .Object@width*(.Object@padding[3]/100)
 
       v <- .Object@values
-      if ( vMin >= 0 ) {
-        v <- v - vMin
-        steps <- .Object@availableHeight / (vMax-vMin)
-        .Object@coordsY <- v * steps
+      if(vMin!=vMax){
+        if ( vMin >= 0 ) {
+          v <- v - vMin
+          steps <- .Object@availableHeight / (vMax-vMin)
+          .Object@coordsY <- v * steps
+        }
+        if ( vMin < 0 ) {
+          v <- v - vMax
+          steps <- .Object@availableHeight / (vMax-vMin)
+          .Object@coordsY <- .Object@availableHeight - abs(v * -steps)
+        }
+        .Object@coordsY <- .Object@coordsY + (.Object@height-.Object@availableHeight)/2
+      }else{
+        .Object@coordsY <- (.Object@height-.Object@availableHeight)/2
       }
-      if ( vMin < 0 ) {
-        v <- v - vMax
-        steps <- .Object@availableHeight / (vMax-vMin)
-        .Object@coordsY <- .Object@availableHeight - abs(v * -steps)
-      }
-      .Object@coordsY <- .Object@coordsY + (.Object@height-.Object@availableHeight)/2
       return(.Object)
     }
 )
@@ -444,7 +452,7 @@ setMethod(
 )
 
 
-### set/replace slots 'barCol', 'barWidth' and 'barSpacingPerc'
+### set/replace slots 'barCol', 'barWidth' and 'barSpacingPerc', 'bgCol'
 ### of objects of class 'sparkbar'
 setReplaceMethod(
     f='barWidth',
@@ -489,7 +497,20 @@ setMethod(
     signature='sparkbar',
     definition=function(object) { return(object@barSpacingPerc) }
 )
-
+setReplaceMethod(
+    f='bgCol',
+    signature='sparkbar',
+    definition=function(object,value) {
+      object@bgCol <- value
+      validObject(object)
+      return(object)
+    }
+)
+setMethod(
+    f='bgCol',
+    signature='sparkbar',
+    definition=function(object) { return(object@bgCol) }
+)
 ### set/replace slots 'barCol', 'barWidth' and 'barSpacingPerc'
 ### of objects of class 'sparkhist'
 #setReplaceMethod(
@@ -627,6 +648,20 @@ setMethod(
     definition=function(object) { return(object@boxShowOut) }
 )
 
+setReplaceMethod(
+    f='bgCol',
+    signature='sparkbox',
+    definition=function(object, value) {
+      object@bgCol <- value
+      validObject(object)
+      return(object)
+    }
+)
+setMethod(
+    f='bgCol',
+    signature='sparkbox',
+    definition=function(object) { return(object@bgCol) }
+)
 
 ### set/replace slots 'dataObj', 'tableContent' and 'varType'
 ### of objects of class 'sparkTable'
@@ -822,9 +857,9 @@ setMethod(f='plot', signature='sparkline', definition=function(x, y,...) {
     axis.ticks.margin = unit(0,"null"),
     axis.text.x = element_blank(),
     axis.text.y = element_blank(),
-    panel.background=element_rect(fill="white")
+    panel.background=element_rect(fill=allColors(x)[4])
   )
-  p <- p + scale_x_continuous(expand=c(0,0.02)) + scale_y_continuous(expand=c(0,0.02))
+#  p <- p + scale_x_continuous(expand=c(0,0.02)) + scale_y_continuous(expand=c(0,0.02))
   p <- p + labs(x=NULL, y=NULL)
 
   # IQR
@@ -834,30 +869,33 @@ setMethod(f='plot', signature='sparkline', definition=function(x, y,...) {
     x2 <- df$x[n]
     y1 <- as.numeric(quantile(df$y, 0.25))
     y2 <- as.numeric(quantile(df$y, 0.75))
-    p <- p + geom_rect(aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill="darkgrey", color="darkgrey", alpha=0.4)
+    p <- p + geom_rect(xmin=x1, xmax=x2, ymin=y1, ymax=y2, fill=allColors(x)[6], color=allColors(x)[6])
   }
+  lw <- lineWidth(x)
+  #lw <- min(round(lineWidth(x)), 10)
+  #lw <- max(1, lw)
+  #lw <- seq(0.5, 2, length=10)[lw]
 
-  lw <- min(round(lineWidth(x)), 10)
-  lw <- max(1, lw)
-  lw <- seq(0.5, 2, length=10)[lw]
-
-  p <- p + geom_line(aes(x=x, y=y), size=lw)
-  p <- p + geom_point(aes(x=x, y=y), size=lw-0.001)
+  p <- p + geom_line(aes(x=x, y=y), size=lw, color=allColors(x)[5])
+  p <- p + geom_point(aes(x=x, y=y), size=lw-0.001, color=allColors(x)[5])
 
   # points
-  size_p <- min(round(pointWidth(x)), 10)
-  size_p <- max(1, size_p)
-  size_p <- round(seq(2.5, 3.1, length=10),2)[size_p]
-
+  size_p <- pointWidth(x)
+  #size_p <- min(round(pointWidth(x)), 10)
+  #size_p <- max(1, size_p)
+  #size_p <- round(seq(2.5, 3.1, length=10),2)[size_p]
+  p <- p + scale_x_continuous(expand=c(0,size_p/50)) + scale_y_continuous(expand=c(0,size_p/50))
   # minimum
   if ( !is.na(allColors(x)[1]) ) {
     minIndex <- max(which(df$y==min(na.omit(df$y))))
     p <- p + geom_point(x=df$x[minIndex], y=df$y[minIndex], color=allColors(x)[1], size=size_p)
   }
+  #maximum
   if ( !is.na(allColors(x)[2]) ) {
     maxIndex <- max(which(df$y==max(na.omit(df$y))))
     p <- p + geom_point(x=df$x[maxIndex], y=df$y[maxIndex], color=allColors(x)[2], size=size_p)
   }
+  #last point
   if ( !is.na(allColors(x)[3]) ) {
     lastIndex <- length(df$y)
     p <- p + geom_point(x=df$x[lastIndex], y=df$y[lastIndex], color=allColors(x)[3], size=size_p)
@@ -908,13 +946,20 @@ setMethod(f='plot', signature='sparkbar', definition=function(x, y, ...) {
     axis.ticks.margin = unit(0,"null"),
     axis.text.x = element_blank(),
     axis.text.y = element_blank(),
-    panel.background=element_rect(fill="white")
+    panel.background=element_rect(fill=bgCol(x))
   )
   p <- p + scale_x_continuous(expand=c(0,0.02)) + scale_y_continuous(expand=c(0,0.02))
   p <- p + labs(x=NULL, y=NULL)
 
   p <- p + geom_rect(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax,fill=barCol), colour=x@barCol[3], size=0)
-  p <- p + scale_fill_manual(values=x@barCol[1:2],guide=FALSE)
+  if(all(df$barCol=="A")){
+    p <- p + scale_fill_manual(values=x@barCol[1],guide=FALSE)
+  }else if(all(df$barCol=="B")){
+    p <- p + scale_fill_manual(values=x@barCol[2],guide=FALSE)
+  }else{
+    p <- p + scale_fill_manual(values=x@barCol[1:2],guide=FALSE)
+  }
+  
 
   params <- list(...)
   if ( !is.null(params$padding) ) {
@@ -959,7 +1004,7 @@ setMethod(f='plot', signature='sparkhist', definition=function(x, y, ...) {
     axis.ticks.margin = unit(0,"null"),
     axis.text.x = element_blank(),
     axis.text.y = element_blank(),
-    panel.background=element_rect(fill="white")
+    panel.background=element_rect(fill=bgCol(x))
   )
   p <- p + scale_x_continuous(expand=c(0,0.02)) + scale_y_continuous(expand=c(0,0.02))
   p <- p + labs(x=NULL, y=NULL)
@@ -1008,7 +1053,7 @@ setMethod(f='plot', signature='sparkbox', definition=function(x, y, ...) {
     axis.ticks.margin = unit(0,"null"),
     axis.text.x = element_blank(),
     axis.text.y = element_blank(),
-    panel.background=element_rect(fill="white")
+    panel.background=element_rect(fill=bgCol(x))
   )
   p <- p + scale_x_continuous(expand=c(0,0.02)) + scale_y_continuous(expand=c(0,0.02))
   p <- p + labs(x=NULL, y=NULL)
@@ -1044,12 +1089,12 @@ setMethod(f='export', signature='sparkline',
   definition=function(object, outputType="pdf", filename="sparkLine", ...) {
     .Object <- object
     pp <- plot(.Object, ...) #+ theme(plot.margin=unit(c(-0.0,-0.0,-0.4,-0.4),c("line","line","line","line")))
-    if ( !all(outputType %in% c("pdf","eps","png")) ) {
+    if ( !all(outputType %in% c("pdf","eps","png","svg")) ) {
       stop("please provide valid output types!\n")
     }
     #suppressWarnings(print(pp))
     for ( t in unique(outputType)) {
-      ggsave(filename=paste0(filename, ".", t), plot=pp, units="in", width=.Object@width/.Object@height, height=1)
+      ggsave(filename=paste0(filename, ".", t), plot=pp, units="in", width=.Object@width, height=.Object@height,bg="transparent")
     }
   }
 )
@@ -1058,12 +1103,12 @@ setMethod(f='export', signature='sparkbar',
   definition=function(object, outputType="pdf", filename="sparkBar", ...) {
     .Object <- object
     pp <- plot(.Object) # theme(plot.margin=unit(c(-0.0,-0.0,-0.4,-0.4),c("line","line","line","line")))
-    if ( !all(outputType %in% c("pdf","eps","png")) ) {
+    if ( !all(outputType %in% c("pdf","eps","png","svg")) ) {
       stop("please provide valid output types!\n")
     }
     #suppressWarnings(print(pp))
     for ( t in unique(outputType)) {
-      ggsave(filename=paste0(filename, ".", t), plot=pp, units="in", width=.Object@width/.Object@height, height=1)
+      ggsave(filename=paste0(filename, ".", t), plot=pp, units="in", width=.Object@width, height=.Object@height,bg="transparent")
     }
   }
 )
@@ -1072,12 +1117,12 @@ setMethod(f='export', signature='sparkhist',
   definition=function(object, outputType="pdf", filename="sparkHist", ...) {
     .Object <- object
     pp <- plot(.Object) # theme(plot.margin=unit(c(-0.0,-0.0,-0.4,-0.4),c("line","line","line","line")))
-    if ( !all(outputType %in% c("pdf","eps","png")) ) {
+    if ( !all(outputType %in% c("pdf","eps","png","svg")) ) {
       stop("please provide valid output types!\n")
     }
     #suppressWarnings(print(pp))
     for ( t in unique(outputType)) {
-      ggsave(filename=paste0(filename, ".", t), plot=pp, units="in", width=.Object@width/.Object@height, height=1)
+      ggsave(filename=paste0(filename, ".", t), plot=pp, units="in", width=.Object@width, height=.Object@height, bg="transparent")
     }
   }
 )
@@ -1086,12 +1131,12 @@ setMethod(f='export', signature='sparkbox',
   definition=function(object, outputType="pdf", filename="sparkBox", ...) {
     .Object <- object
     pp <- plot(.Object) # theme(plot.margin=unit(c(-0.0,-0.0,-0.4,-0.4),c("line","line","line","line")))
-    if ( !all(outputType %in% c("pdf","eps","png")) ) {
+    if ( !all(outputType %in% c("pdf","eps","png","svg")) ) {
       stop("please provide valid output types!\n")
     }
     #suppressWarnings(print(pp))
     for ( t in unique(outputType)) {
-      ggsave(filename=paste0(filename, ".", t), plot=pp, units="in", width=.Object@width/.Object@height, height=1)
+      ggsave(filename=paste0(filename, ".", t), plot=pp, units="in", width=.Object@width, height=.Object@height,bg="transparent")
     }
   }
 )
@@ -1099,9 +1144,16 @@ setMethod(f='export', signature='sparkbox',
 setMethod(f='export', signature='sparkTable',
     definition=function(object, outputType="html", filename=NULL, graphNames="out",infonote=TRUE, scaleByCol=FALSE,...) {
     .Object <- object
-    if ( !outputType %in% c("tex", "html") )
+    if ( !outputType %in% c("tex", "html", "htmlsvg") )
       stop("please provide a valid output type!\n")
-    filename <- paste(filename, ".", outputType, sep="")
+
+    if(!is.null(filename)){
+      if (outputType %in% c("html","tex"))
+        filename <- paste0(filename, ".", outputType)
+      if (outputType=="htmlsvg")
+        filename <- paste0(filename,".html")
+    }
+
     TH <- names(.Object@tableContent)
     # to data.frame
     if ( is.matrix(.Object@dataObj) ) {
@@ -1144,13 +1196,17 @@ setMethod(f='export', signature='sparkTable',
           if(outputType=="tex"){
             export(plotObj[[i]][[j]], outputType='pdf', filename=fn)
             m[j,i] <- paste("\\graph{1}{1}{", fn, "}",sep="")
-          }else  if(outputType=="html"){
+          }else if(outputType=="html"){
             export(plotObj[[i]][[j]], outputType='png', filename=fn)
             m[j,i] <- paste('<img style="height:',plotObj[[i]][[j]]@height,'in;" src="', fn, '.png">',sep="")
-          }else stop("WTF happened now?")
+          }else if (outputType=="htmlsvg") {
+            export(plotObj[[i]][[j]], outputType='svg', filename=fn)
+            m[j,i] <- paste('<img style="height:',plotObj[[i]][[j]]@height,'in;" src="', fn, '.svg">',sep="")
+          } else stop("WTF happened now?")
         }else if ( class(.Object@tableContent[[i]]) == "sparkbar" )  {
           tmpObj <- newSparkBar(values=values)
           barCol(tmpObj) <- barCol(.Object@tableContent[[i]])
+          bgCol(tmpObj) <- bgCol(.Object@tableContent[[i]])
           barSpacingPerc(tmpObj) <- barSpacingPerc(.Object@tableContent[[i]])
           width(tmpObj) <- width(.Object@tableContent[[i]])
           height(tmpObj) <- height(.Object@tableContent[[i]])
@@ -1165,10 +1221,14 @@ setMethod(f='export', signature='sparkTable',
           }else if(outputType=="html"){
             export(plotObj[[i]][[j]], outputType='png', filename=fn)
             m[j,i] <- paste('<img style="height:',plotObj[[i]][[j]]@height,'in;" src="', fn, '.png">',sep="")
+          }else if(outputType=="htmlsvg"){
+            export(plotObj[[i]][[j]], outputType='svg', filename=fn)
+            m[j,i] <- paste('<img style="height:',plotObj[[i]][[j]]@height,'in;" src="', fn, '.svg">',sep="")
           }else stop("WTF happened now?")
         }else if ( class(.Object@tableContent[[i]]) == "sparkbox" )  {
           tmpObj <- newSparkBox(values=values)
           boxCol(tmpObj) <- boxCol(.Object@tableContent[[i]])
+          bgCol(tmpObj) <- bgCol(.Object@tableContent[[i]])
           boxLineWidth(tmpObj) <- boxLineWidth(.Object@tableContent[[i]])
           outCol(tmpObj) <- outCol(.Object@tableContent[[i]])
           width(tmpObj) <- width(.Object@tableContent[[i]])
@@ -1185,8 +1245,11 @@ setMethod(f='export', signature='sparkTable',
           }else if(outputType=="html"){
             export(plotObj[[i]][[j]], outputType='png', filename=fn)
             m[j,i] <- paste('<img style="height:',plotObj[[i]][[j]]@height,'in;" src="', fn, '.png">',sep="")
+          }else if(outputType=="htmlsvg"){
+            export(plotObj[[i]][[j]], outputType='svg', filename=fn)
+            m[j,i] <- paste('<img style="height:',plotObj[[i]][[j]]@height,'in;" src="', fn, '.svg">',sep="")
           }else stop("WTF happened now?")
-        }else  if ( class(.Object@tableContent[[i]]) == "function" )  {# user-defined function
+        }else if ( class(.Object@tableContent[[i]]) == "function" )  {# user-defined function
           plotObj[[i]][[j]] <- .Object@tableContent[[i]](values)
           if(outputType=="tex")
             m[j,i] <- paste("$",plotObj[[i]][[j]],"$",sep= "")
@@ -1195,6 +1258,7 @@ setMethod(f='export', signature='sparkTable',
         }else if ( class(.Object@tableContent[[i]]) == "sparkhist" )  {
           tmpObj <- newSparkHist(values=values)
           barCol(tmpObj) <- barCol(.Object@tableContent[[i]])
+          bgCol(tmpObj) <- bgCol(.Object@tableContent[[i]])
           barSpacingPerc(tmpObj) <- barSpacingPerc(.Object@tableContent[[i]])
           width(tmpObj) <- width(.Object@tableContent[[i]])
           height(tmpObj) <- height(.Object@tableContent[[i]])
@@ -1209,6 +1273,9 @@ setMethod(f='export', signature='sparkTable',
           }else if(outputType=="html"){
             export(plotObj[[i]][[j]], outputType='png', filename=fn)
             m[j,i] <- paste('<img style="height:',plotObj[[i]][[j]]@height,'in;" src="', fn, '.png">',sep="")
+          }else if(outputType=="htmlsvg"){
+            export(plotObj[[i]][[j]], outputType='svg', filename=fn)
+            m[j,i] <- paste('<img style="height:',plotObj[[i]][[j]]@height,'in;" src="', fn, '.svg">',sep="")
           }else stop("WTF happened now?")
         }
         else stop("Something is wrong in the content object!?!?!\n")
@@ -1222,17 +1289,17 @@ setMethod(f='export', signature='sparkTable',
         cat("\n\nInformation: please do not forget to add the following command before \\begin{document} in your tex-file:\n\n")
         cat('\\newcommand{\\graph}[3]{ \\raisebox{-#1mm}{\\includegraphics[height=#2em]{#3}}}\n\n')
       }
-    }else if(outputType=="html"){
+    }else if(outputType%in%c("html","htmlsvg")){
       outputMat <- m
       print(xT <- xtable(m), sanitize.text.function = function(x){x},type="html")
     }else stop("WTF happened now?")
     if(!is.null(filename)){
-      if(outputType=="html")
+      if(outputType%in%c("html","htmlsvg"))
         cat('<!--',filename,'was created.-->\n')
       else if(outputType=="tex")
         cat('%',filename,'was created.\n')
       sink(filename)
-      if(outputType=="html"){
+      if(outputType%in%c("html","htmlsvg")){
         cat('<html><body>')
         print(xT <- xtable(m), sanitize.text.function = function(x){x},type="html")
         cat('</body></html>')
@@ -1257,10 +1324,14 @@ setMethod(f='export', signature='geoTable',
   definition=function(object, outputType="html", filename=NULL, graphNames="out", transpose=FALSE, include.rownames=FALSE,include.colnames=FALSE,rownames=NULL,colnames=NULL,...) {
     print.names <- FALSE
     .Object <- object
-    if ( !outputType %in% c("tex", "html") )
+    if ( !outputType %in% c("tex", "html","htmlsvg"))
       stop("please provide a valid output type!\n")
-    if(!is.null(filename))
-      filename <- paste(filename, ".", outputType, sep="")
+    if(!is.null(filename)){
+      if (outputType %in% c("html","tex"))
+        filename <- paste0(filename, ".", outputType)
+      if (outputType=="htmlsvg")
+        filename <- paste0(filename,".html")
+    }
     TH <- names(.Object@tableContent)
     # to data.frame
     if(!is.list(.Object@dataObj))
@@ -1321,6 +1392,9 @@ setMethod(f='export', signature='geoTable',
             }else if(outputType=="html"){
               export(plotObj[[i]][[j]], outputType='png', filename=fn)
               m[j,i] <- paste('<img style="height:',plotObj[[i]][[j]]@height,'in" src="', fn, '.png">',sep="")
+            }else if(outputType=="htmlsvg"){
+              export(plotObj[[i]][[j]], outputType='svg', filename=fn)
+              m[j,i] <- paste('<img style="height:',plotObj[[i]][[j]]@height,'in" src="', fn, '.svg">',sep="")
             }else stop("WTF happened now?")
           }else if ( class(.Object@tableContent[[i]]) == "sparkbar" )  {
             tmpObj <- newSparkBar(values=values, vMin=vMin[colIndex-2], vMax=vMax[colIndex-2])
@@ -1336,6 +1410,9 @@ setMethod(f='export', signature='geoTable',
             }else if(outputType=="html"){
               export(plotObj[[i]][[j]], outputType='png', filename=fn)
               m[j,i] <- paste('<img style="height:',plotObj[[i]][[j]]@height,'in" src="', fn, '.png">',sep="")
+            }else if(outputType=="htmlsvg"){
+              export(plotObj[[i]][[j]], outputType='svg', filename=fn)
+              m[j,i] <- paste('<img style="height:',plotObj[[i]][[j]]@height,'in" src="', fn, '.svg">',sep="")
             }else stop("WTF happened now?")
           }else if ( class(.Object@tableContent[[i]]) == "sparkbox" )  {
             tmpObj <- newSparkBox(values=values, vMin=vMin[colIndex-2], vMax=vMax[colIndex-2])
@@ -1352,6 +1429,9 @@ setMethod(f='export', signature='geoTable',
             }else if(outputType=="html"){
               export(plotObj[[i]][[j]], outputType='png', filename=fn)
               m[j,i] <- paste('<img style="height:',plotObj[[i]][[j]]@height,'in" src="', fn, '.png">',sep="")
+            }else if(outputType=="htmlsvg"){
+              export(plotObj[[i]][[j]], outputType='svg', filename=fn)
+              m[j,i] <- paste('<img style="height:',plotObj[[i]][[j]]@height,'in" src="', fn, '.svg">',sep="")
             }else stop("WTF happened now?")
           }else  if ( class(.Object@tableContent[[i]]) == "function" )  {# user-defined function
             plotObj[[i]][[j]] <- .Object@tableContent[[i]](values)
@@ -1458,7 +1538,7 @@ setMethod(f='export', signature='geoTable',
       cat("\n\nInformation: please do not forget to add the following command before \\begin{document} in your tex-file:\n\n")
       cat('\\newcommand{\\graph}[3]{ \\raisebox{-#1mm}{\\includegraphics[height=#2em]{#3}}}\n\n')
 
-    }else if(outputType=="html"){
+    }else if(outputType%in%c("html","htmlsvg")){
       print.xtable2(xT, sanitize.text.function = function(x){x},type="html",include.rownames=include.rownames,
           include.colnames=include.colnames,skip.columns=skipIT,wider.columns=changeIT,column.width=column.width,
           hline.after=hline,transpose=transpose,rownames=rownames,colnames=colnames)
@@ -1469,7 +1549,7 @@ setMethod(f='export', signature='geoTable',
       else if(outputType=="tex")
         cat('%',filename,'was created.\n')
       sink(filename)
-      if(outputType=="html"){
+      if(outputType%in%c("html","htmlsvg")){
         cat('<html><head>
                 <style type="text/css">
                 table{border-color: #000;border-width: 0px 0px 0px 0px;border-style: solid; border-collapse: collapse;}

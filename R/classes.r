@@ -16,8 +16,8 @@ setClass(
       coordsY="numeric"
   ),
   prototype=prototype(
-      width=1.5,
-      height=.3,
+      width=3.5,
+      height=1,
       values=rpois(20, 5)*sample(c(1,-1), 20, replace=TRUE),
       padding=c(5,5,5,5), #top,bottom,left,right
       availableWidth=NULL,
@@ -46,13 +46,13 @@ setClass(
 setClass(
   Class="sparkline",
   representation=representation(
-      allColors="ANY", # 1=min,2=max,3=last,4=fill,5=line,6=iqr
+      allColors="ANY", # 1=min,2=max,3=last,4=fillbackground,5=line,6=iqr
       pointWidth="numeric",
       lineWidth="numeric",
       showIQR="logical"
   ),
   prototype=prototype(
-      allColors=c('red', 'green', 'blue', 'orange', 'black', 'grey'),
+      allColors=c('red', 'green', 'blue', 'white', 'black', '#bbbbbb'),
       pointWidth=4, # point Width
       lineWidth=1,
       showIQR=FALSE
@@ -85,12 +85,14 @@ setClass(
   representation=representation(
       barCol="ANY",
       barWidth="numeric",
-      barSpacingPerc="numeric"
+      barSpacingPerc="numeric",
+      bgCol="ANY"
   ),
   prototype=prototype(
       barCol=c("#0000ff", "#ff0000", "#000000"), # negativ, positiv, lines
       barWidth=NULL,
-      barSpacingPerc=2
+      barSpacingPerc=2,
+      bgCol="white"
   ),
   validity=function(object) {
     if ( !is.null(object@barCol) && length(object@barCol) != 3 )
@@ -114,12 +116,14 @@ setClass(
   representation=representation(
       outCol="ANY", # outlierColor
       boxCol="ANY",   # 1=lineColor,2=fillColor
-      boxLineWidth="numeric"
+      boxLineWidth="numeric",
+      bgCol="ANY"
   ),
   prototype=prototype(
       outCol=c('orange'),
       boxCol=c('#000000', 'orange'),
-      boxLineWidth=1
+      boxLineWidth=1,
+      bgCol="white"
   ),
   validity=function(object) {
     if ( sd(object@values, na.rm=T) == 0 )

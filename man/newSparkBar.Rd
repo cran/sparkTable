@@ -11,12 +11,12 @@
 newSparkLine(width=NULL, height=NULL, values=NULL, padding=NULL, allColors=NULL,
   pointWidth=NULL, lineWidth=NULL, showIQR=NULL, vMin=NULL, vMax=NULL,outputType="html")
 newSparkBar(width=NULL, height=NULL, values=NULL, padding=NULL, barCol=NULL,
-  barWidth=NULL, barSpacingPerc=NULL, vMin=NULL, vMax=NULL,outputType="html")
+  barWidth=NULL, barSpacingPerc=NULL, vMin=NULL, vMax=NULL,bgCol=NULL,outputType="html")
 newSparkBox(width=NULL, height=NULL, values=NULL, padding=NULL, boxOutCol=NULL,
     boxMedCol=NULL, boxShowOut=NULL, boxCol=NULL, boxLineWidth=NULL,
-    vMin=NULL, vMax=NULL,outputType="html")
+    vMin=NULL, vMax=NULL,bgCol=NULL,outputType="html")
 newSparkHist(width=NULL, height=NULL, values=NULL, padding=NULL, barCol=NULL,
-  barWidth=NULL, barSpacingPerc=NULL, vMin=NULL, vMax=NULL,outputType="html")
+  barWidth=NULL, barSpacingPerc=NULL, vMin=NULL, vMax=NULL,bgCol=NULL,outputType="html")
 }
 \arguments{
   \item{width}{described in \code{\link{setParameter}}}
@@ -37,6 +37,7 @@ newSparkHist(width=NULL, height=NULL, values=NULL, padding=NULL, barCol=NULL,
   \item{boxShowOut}{logical vector specifying if outliers should be displayed in spark boxplots}
   \item{boxCol}{described in \code{\link{setParameter}}}
   \item{boxLineWidth}{described in \code{\link{setParameter}}}
+  \item{bgCol}{described in \code{\link{setParameter}}}
   \item{outputType}{described in \code{\link{plot}}}
 }
 \author{Bernhard Meindl, Alexander Kowarik, Statistics Austria }
@@ -51,7 +52,7 @@ newSparkHist(width=NULL, height=NULL, values=NULL, padding=NULL, barCol=NULL,
 
   ### SparkLine
   a <- newSparkLine(values=x, pointWidth=8)
-  plot(a, outputType='png', filename='testLine1')
+  export(a, outputType='png', filename='testLine1')
 
   a <- setParameter(a, sample(1:10, 15, replace=TRUE), type='values')
   getParameter(a, type='values')
