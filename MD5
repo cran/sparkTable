@@ -1,11 +1,11 @@
-0bab5f4a472a2deea9f129ff6f6dafed *DESCRIPTION
+831499a1ec6e4f1800c5c1290099a56d *DESCRIPTION
 c278db43de78c9520ed53cec3aae9d14 *NAMESPACE
 2ae8f2d1532668a2eb35d09c734a9f73 *R/auxFunctions.r
 891d105c3f50eb25e33c552330155583 *R/checkerplot.R
 38953c3c4bf817aff3afd705401a85d1 *R/classes.r
 1d8e9c40f8d7ca7745f35b556158e4c3 *R/customizeSparkTable.R
 33548a8b81c68d96bd1bed2f975cb7c1 *R/exports.r
-1fb13e6d62b5cbef58d143e48113ad3c *R/methods.r
+b95cbc4eec662deaedec398b7735eec3 *R/methods.r
 62caa3015b12162ed6242786c8167f57 *R/optimal_grid_allocation.R
 d5bd7defdffc9360b019071389b421be *R/showSparkTable.R
 37203ac7f0c1fdb703205f6131fe6eb2 *R/zzz.R
