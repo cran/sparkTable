@@ -820,8 +820,6 @@ plotEmpty <- function(df) {
     plot.background=element_blank(),
     strip.background=element_rect(fill="white", colour="white"),
     panel.grid = element_blank(),
-    axis.ticks.x=element_blank(),
-    axis.ticks.y=element_blank(),
     axis.text.x = element_blank(),
     axis.text.y = element_blank(),
     panel.background=element_rect(fill="white")
@@ -849,10 +847,9 @@ setMethod(f='plot', signature='sparkline', definition=function(x, y,...) {
     legend.background=element_rect(fill="white", colour=NA),
     plot.background=element_blank(),
     strip.background=element_rect(fill="white", colour="white"),
-    panel.margin = unit(0,"null"),
+    panel.spacing = unit(0,"null"),
     plot.margin = rep(unit(0,"null"),4),
     panel.grid = element_blank(),
-    axis.ticks = element_blank(),
     axis.ticks.length = unit(0,"null"),
     #axis.ticks.margin = unit(0,"null"),
     axis.text.x = element_blank(),
@@ -877,7 +874,7 @@ setMethod(f='plot', signature='sparkline', definition=function(x, y,...) {
   #lw <- seq(0.5, 2, length=10)[lw]
 
   p <- p + geom_line(aes(x=x, y=y), size=lw, color=allColors(x)[5])
-  p <- p + geom_point(aes(x=x, y=y), size=lw/20, color=allColors(x)[5])
+  #p <- p + geom_point(aes(x=x, y=y), size=lw/20, color=allColors(x)[5])
 
   # points
   size_p <- pointWidth(x)
@@ -938,10 +935,9 @@ setMethod(f='plot', signature='sparkbar', definition=function(x, y, ...) {
     legend.background=element_rect(fill="white", colour=NA),
     plot.background=element_blank(),
     strip.background=element_rect(fill="white", colour="white"),
-    panel.margin = unit(0,"null"),
+    panel.spacing = unit(0,"null"),
     plot.margin = rep(unit(0,"null"),4),
     panel.grid = element_blank(),
-    axis.ticks = element_blank(),
     axis.ticks.length = unit(0,"null"),
     #axis.ticks.margin = unit(0,"null"),
     axis.text.x = element_blank(),
@@ -996,10 +992,9 @@ setMethod(f='plot', signature='sparkhist', definition=function(x, y, ...) {
     legend.background=element_rect(fill="white", colour=NA),
     plot.background=element_blank(),
     strip.background=element_rect(fill="white", colour="white"),
-    panel.margin = unit(0,"null"),
+    panel.spacing = unit(0,"null"),
     plot.margin = rep(unit(0,"null"),4),
     panel.grid = element_blank(),
-    axis.ticks = element_blank(),
     axis.ticks.length = unit(0,"null"),
     #xis.ticks.margin = unit(0,"null"),
     axis.text.x = element_blank(),
@@ -1008,8 +1003,8 @@ setMethod(f='plot', signature='sparkhist', definition=function(x, y, ...) {
   )
   p <- p + scale_x_continuous(expand=c(0,0.02)) + scale_y_continuous(expand=c(0,0.02))
   p <- p + labs(x=NULL, y=NULL)
-
-  p <- p + geom_histogram(aes(x=x, y=y), stat="identity", fill=x@barCol[2], col=x@barCol[3])
+  # using geom_bar instead of geom_histogram for precomputed histogram
+  p <- p + geom_bar(aes(x=x, y=y), stat="identity", fill=x@barCol[2], col=x@barCol[3])
 
   params <- list(...)
   if ( !is.null(params$padding) ) {
@@ -1045,10 +1040,9 @@ setMethod(f='plot', signature='sparkbox', definition=function(x, y, ...) {
     legend.background=element_rect(fill="white", colour=NA),
     plot.background=element_blank(),
     strip.background=element_rect(fill="white", colour="white"),
-    panel.margin = unit(0,"null"),
+    panel.spacing = unit(0,"null"),
     plot.margin = rep(unit(0,"null"),4),
     panel.grid = element_blank(),
-    axis.ticks = element_blank(),
     axis.ticks.length = unit(0,"null"),
     #axis.ticks.margin = unit(0,"null"),
     axis.text.x = element_blank(),
